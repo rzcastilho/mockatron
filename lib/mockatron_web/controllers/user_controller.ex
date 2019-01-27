@@ -44,8 +44,8 @@ defmodule MockatronWeb.UserController do
     case Auth.token_sign_in(email, password) do
       {:ok, token, _claims} ->
         conn |> render("jwt.json", jwt: token)
-      _ ->
-        {:error, :unauthorized}
+      error ->
+        error
     end
   end
 

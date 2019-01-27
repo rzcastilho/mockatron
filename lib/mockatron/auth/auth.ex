@@ -109,7 +109,7 @@ defmodule Mockatron.Auth do
     case Repo.get_by(User, email: email) do
       nil ->
         dummy_checkpw()
-        {:error, "Login error."}
+        {:error, :email_not_found}
       user ->
         {:ok, user}
     end
@@ -131,8 +131,8 @@ defmodule Mockatron.Auth do
     case email_password_auth(email, password) do
       {:ok, user} ->
         Guardian.encode_and_sign(user)
-      _ ->
-        {:error, :unauthorized}
+      error ->
+        error
     end
   end
 

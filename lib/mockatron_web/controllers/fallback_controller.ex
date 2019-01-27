@@ -18,10 +18,16 @@ defmodule MockatronWeb.FallbackController do
     |> render(MockatronWeb.ErrorView, :"404")
   end
 
-  def call(conn, {:error, :unauthorized}) do
+  def call(conn, {:error, :email_not_found}) do
     conn
     |> put_status(:unauthorized)
-    |> json(%{error: "Login error"})
+    |> json(%{code: 1, error: "Unauthorized", message: "Email not found"})
+  end
+
+  def call(conn, {:error, :invalid_password}) do
+    conn
+    |> put_status(:unauthorized)
+    |> json(%{code: 2, error: "Unauthorized", message: "Invalid password"})
   end
 
 end
