@@ -44,7 +44,7 @@ defmodule Mockatron.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:cachex, "~> 3.0.2"},
-      {:comeonin, "~> 4.0"},
+      {:comeonin, "~> 5.1"},
       {:bcrypt_elixir, "~> 1.0"},
       {:guardian, "~> 1.0"},
       {:excoveralls, "~> 0.10", only: :test}
