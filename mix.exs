@@ -37,7 +37,7 @@ defmodule Mockatron.Mixfile do
     [
       {:phoenix, "~> 1.3.4"},
       {:phoenix_pubsub, "~> 1.0"},
-      {:phoenix_ecto, "~> 3.2"},
+      {:phoenix_ecto, "~> 4.0"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 2.10"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
@@ -46,7 +46,7 @@ defmodule Mockatron.Mixfile do
       {:cachex, "~> 3.2.0"},
       {:comeonin, "~> 4.0"},
       {:bcrypt_elixir, "~> 1.0"},
-      {:guardian, "~> 1.0"},
+      {:guardian, "~> 2.0"},
       {:excoveralls, "~> 0.10", only: :test}
     ]
   end
