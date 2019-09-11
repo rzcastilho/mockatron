@@ -46,7 +46,7 @@ defmodule Mockatron.Mixfile do
       {:cachex, "~> 3.0.2"},
       {:comeonin, "~> 5.1"},
       {:bcrypt_elixir, "~> 1.0"},
-      {:guardian, "~> 1.0"},
+      {:guardian, "~> 2.0"},
       {:excoveralls, "~> 0.10", only: :test}
     ]
   end
