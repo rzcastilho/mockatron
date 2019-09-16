@@ -46,7 +46,7 @@ defmodule Mockatron.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:cachex, "~> 3.2.0"},
-      {:comeonin, "~> 4.0"},
+      {:comeonin, "~> 5.1"},
       {:bcrypt_elixir, "~> 1.0"},
       {:guardian, "~> 2.0"},
       {:excoveralls, "~> 0.10", only: :test}
