@@ -30,7 +30,7 @@ defmodule MockatronWeb.ResponseController do
         with {:ok, %Response{} = response} <- Core.create_response(response_params, agent) do
           conn
           |> put_status(:created)
-          |> put_resp_header("location", agent_response_path(conn, :show, agent_id, response))
+          |> put_resp_header("location", Routes.agent_response_path(conn, :show, agent_id, response))
           |> render("show.json", response: response)
         end
     end

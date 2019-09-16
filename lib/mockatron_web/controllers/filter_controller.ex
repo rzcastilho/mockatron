@@ -30,7 +30,7 @@ defmodule MockatronWeb.FilterController do
         with {:ok, %Filter{} = filter} <- Core.create_filter(filter_params, agent) do
           conn
           |> put_status(:created)
-          |> put_resp_header("location", agent_filter_path(conn, :show, agent_id, filter))
+          |> put_resp_header("location", Routes.agent_filter_path(conn, :show, agent_id, filter))
           |> render("show.json", filter: filter)
         end
     end

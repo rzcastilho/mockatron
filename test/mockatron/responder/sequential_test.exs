@@ -65,7 +65,7 @@ defmodule Mockatron.Responder.SequentialTest do
     |> Enum.map(
          fn _ ->
            %{body: body} = Mockatron.Responder.Sequential.response(pid, nil);
-           Poison.decode!(body);
+           Jason.decode!(body);
          end)
     assert @sequential_responses == current_sequential_responses
   end

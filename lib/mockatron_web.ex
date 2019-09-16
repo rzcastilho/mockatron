@@ -20,26 +20,28 @@ defmodule MockatronWeb do
   def controller do
     quote do
       use Phoenix.Controller, namespace: MockatronWeb
+
       import Plug.Conn
-      import MockatronWeb.Router.Helpers
       import MockatronWeb.Gettext
+      alias MockatronWeb.Router.Helpers, as: Routes
     end
   end
 
   def view do
     quote do
-      use Phoenix.View, root: "lib/mockatron_web/templates",
-                        namespace: MockatronWeb
+      use Phoenix.View,
+        root: "lib/mockatron_web/templates",
+        namespace: MockatronWeb
 
       # Import convenience functions from controllers
-      import Phoenix.Controller, only: [get_flash: 2, view_module: 1]
+      import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
 
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import MockatronWeb.Router.Helpers
       import MockatronWeb.ErrorHelpers
       import MockatronWeb.Gettext
+      alias MockatronWeb.Router.Helpers, as: Routes
     end
   end
 

@@ -17,7 +17,7 @@ defmodule MockatronWeb.AgentController do
     with {:ok, %Agent{} = agent} <- Core.create_agent(agent_params, current_user) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", agent_path(conn, :show, agent))
+      |> put_resp_header("location", Routes.agent_path(conn, :show, agent))
       |> render("show.json", agent: agent)
     end
   end

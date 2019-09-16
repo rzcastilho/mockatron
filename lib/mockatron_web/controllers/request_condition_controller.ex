@@ -43,7 +43,7 @@
             with {:ok, %RequestCondition{} = request_condition} <- Core.create_request_condition(request_condition_params, filter) do
               conn
               |> put_status(:created)
-              |> put_resp_header("location", agent_filter_request_condition_path(conn, :show, agent_id, filter_id, request_condition))
+              |> put_resp_header("location", Routes.agent_filter_request_condition_path(conn, :show, agent_id, filter_id, request_condition))
               |> render("show.json", request_condition: request_condition)
             end
         end

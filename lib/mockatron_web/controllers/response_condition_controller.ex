@@ -43,7 +43,7 @@ defmodule MockatronWeb.ResponseConditionController do
             with {:ok, %ResponseCondition{} = response_condition} <- Core.create_response_condition(response_condition_params, filter) do
               conn
               |> put_status(:created)
-              |> put_resp_header("location", agent_filter_response_condition_path(conn, :show, agent_id, filter_id, response_condition))
+              |> put_resp_header("location", Routes.agent_filter_response_condition_path(conn, :show, agent_id, filter_id, response_condition))
               |> render("show.json", response_condition: response_condition)
             end
         end

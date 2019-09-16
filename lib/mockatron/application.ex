@@ -1,21 +1,27 @@
 defmodule Mockatron.Application do
-  use Application
-
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
-  def start(_type, _args) do
-    import Supervisor.Spec
+  @moduledoc false
 
-    # Define workers and child supervisors to be supervised
+  use Application
+
+  def start(_type, _args) do
+    # List all child processes to be supervised
     children = [
       # Start the Ecto repository
-      supervisor(Mockatron.Repo, []),
+      Mockatron.Repo,
       # Start the endpoint when the application starts
-      supervisor(MockatronWeb.Endpoint, []),
-      # Start your own worker by calling: Mockatron.Worker.start_link(arg1, arg2, arg3)
-      # worker(Mockatron.Worker, [arg1, arg2, arg3]),
-      worker(Cachex, [:agent, []], id: :agent),
-      worker(Cachex, [:responder, []], id: :responder)
+      MockatronWeb.Endpoint,
+      # Starts a worker by calling: Mockatron.Worker.start_link(arg)
+      # {Mockatron.Worker, arg},
+      %{
+        id: :agent,
+        start: {Cachex, :start_link, [:agent, []]}
+      },
+      %{
+        id: :responder,
+        start: {Cachex, :start_link, [:responder, []]}
+      }
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
