@@ -1,7 +1,7 @@
 defmodule Mockatron.Auth.User do
   use Ecto.Schema
   import Ecto.Changeset
-  import Comeonin.Bcrypt, only: [hashpwsalt: 1]
+  import Bcrypt, only: [hash_pwd_salt: 1]
 
   schema "users" do
     field :email, :string
@@ -31,7 +31,7 @@ defmodule Mockatron.Auth.User do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: pass}}
       ->
-        put_change(changeset, :password_hash, hashpwsalt(pass))
+        put_change(changeset, :password_hash, hash_pwd_salt(pass))
       _ ->
         changeset
     end

@@ -4,7 +4,8 @@ defmodule Mockatron.Auth do
   """
 
   import Ecto.Query, warn: false
-  import Comeonin.Bcrypt, only: [checkpw: 2, dummy_checkpw: 0]
+  import Bcrypt, only: [verify_pass: 2]
+  import Comeonin.Bcrypt, only: [dummy_checkpw: 0]
 
   alias Mockatron.Repo
   alias Mockatron.Guardian
@@ -116,7 +117,7 @@ defmodule Mockatron.Auth do
   end
 
   defp verify_password(password, %User{} = user) when is_binary(password) do
-    if checkpw(password, user.password_hash) do
+    if verify_pass(password, user.password_hash) do
       {:ok, user}
     else
       {:error, :invalid_password}
