@@ -1,18 +1,18 @@
 language: elixir
 elixir:
-  - 1.8.2
+- 1.8.2
 otp_release:
-  - '22.0'
+- '22.0'
 addons:
   postgresql: '9.4'
 services:
-  - postgresql
+- postgresql
 before_script:
-  - mix do ecto.create, ecto.migrate
+- mix do ecto.create, ecto.migrate
 script:
-  - "MIX_ENV=test mix coveralls.travis"
+- MIX_ENV=test mix coveralls.travis
 deploy:
   provider: heroku
   api_key:
-    secure: jePQGSw3jupRljT4QEIn+uUJIMjWJaIVZnjJjNWAyaumHuynCb2Z5pqBkCC478jpxVylrcFwCRPZszncOSBqYz2BwSAKM0Sy90O6x2fLNdvkr31A80dzON9SZhKwpKbqyRgqgZxYPpr0iu+h/nhbucFGSK1A1J+IcF3S516mURizSvsWCGi/yHw7Z5E95g5UTuS+NevpTBbvVxAMXuVjfTIozQ2F8JhQrx0zr7md+jvRhM7pmeV80d8E8DQEZbrfJa7Rq393vQ2sktjk/rFy4E/iRsQ0zFJRvxTk7Q1KacuMG/go/2rEpTs2wBGDHAPJz0dhmeyA103FGGC5QbZxlPiepQiXZsgJRqwlUb6dn4xieGIpz5W4Jp5ZCNzq06AHf5Czct5jkUtdGrgGe7s0eDLGPpch4zgwNFFjxJa4b7AzF2tn3YaBLhHnbR2W0UhUmAu545cDKs5tvhvZWa1BMYTy/A+8nYllOxn1Q9DPhDtFnMziofMUCjX2J1p3E0OIJKY1VDivKT5/xzDMop7vXg/flKDJEOTEVMlAxsWC70EJ71yqA3vXcVq9Q8P1JGIEzlrPHreReAxBeTC0ojiDDHhrsgdC3bXFzmeN/Zf9Q+4u4IKPJpvgUbat38G1aeqWNsDaH/r/EEGjJe0cDrRopOn2FnQNiRIu98r5rZsnmug=
+    secure: dBnv5JdjAlYlvSKrY8samEKR03fYju4l4aF3hJZhN5N86HaYYHAUn4Bo6Z32BdWtLMiPuzciqjpSHZcCNQgIyyJrSqXPYZWOqOLg/lMaNLCvqEfiRiEYXo6gRehgrKERHlYZZpCf22zHCIAaVU10iPpbBXBTrPUSpclwczSizVOlgoc6b+UtgrNf3QbJpraCbu/plhSfx74ZBx8TrCDfKv5FsplrRgaLi4dsTOCFBSqVoPrZtO0UdOn045Y/aDxTXwGG1kwjGkBZvtj5mvTox9m0dF0vc65Sh/QjJt86f2Q1m715suoB0Z2RfKUZdIjKFFrQ+TmJrlLRWUSurSEnZSpLpfWiO/vmxLvYchE3PFe0xy1kKgNxWu/Q7Ldh6iCIHbx6EpoJnqSC7iv0IiLqrbFM/q7GKJL/fdKQh/dFrGOrdjfqPVc+VjVpoGezRHqn0Q85+ntu9l24kvPxgyoNalrYcM/B9xXaNO8NcVVo53ppOFw13cXBbIGkTrAMkCe70JdI6vJ0mVa56dd0VZvy1TQxDzmicbXb40q4rsDi2Y2urYiinu9Mtl6E7tGIJvNmzVH2ahTo0mn835n6Rgdtp1EHkf4aN+L5+OQXNu4au2VdjYI0L+9Bnh0ksiXD0f8syfar/RgT3VGUyEj6cMJqZDbBpWnsAxppdMf/Gon9EYY=
   app: mockatron
