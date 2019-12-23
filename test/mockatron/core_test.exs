@@ -12,6 +12,8 @@ defmodule Mockatron.CoreTest do
 
     @valid_attrs @agent_valid_attrs
     @update_attrs %{content_type: "text/xml", host: "localhost", method: "POST", path: "/xml", port: 8080, protocol: "https", responder: "SEQUENTIAL", operation: "do"}
+    @update_path_param_attrs %{content_type: "application/json", host: "localhost", method: "GET", path: "/json/<id>", port: 4000, protocol: "http", responder: "RANDOM", operation: nil}
+    @update_path_param_custom_regex_attrs %{content_type: "application/json", host: "localhost", method: "GET", path: "/json/<id:[0-9]+>", port: 4000, protocol: "http", responder: "RANDOM", operation: nil}
     @invalid_attrs %{content_type: nil, host: nil, method: nil, path: nil, port: nil, protocol: nil, responder: nil}
 
     setup do
@@ -44,6 +46,7 @@ defmodule Mockatron.CoreTest do
       assert agent.host == "localhost"
       assert agent.method == "GET"
       assert agent.path == "/json"
+      assert agent.path_regex == nil
       assert agent.port == 4000
       assert agent.protocol == "http"
       assert agent.responder == "RANDOM"
@@ -62,10 +65,41 @@ defmodule Mockatron.CoreTest do
       assert agent.host == "localhost"
       assert agent.method == "POST"
       assert agent.path == "/xml"
+      assert agent.path_regex == nil
       assert agent.port == 8080
       assert agent.protocol == "https"
       assert agent.responder == "SEQUENTIAL"
       assert agent.operation == "do"
+    end
+
+    test "update_agent/2 with valid data and path param updates the agent and generates path_regex attr", %{user: user} do
+      agent = agent_fixture(user)
+      assert {:ok, agent} = Core.update_agent(agent, @update_path_param_attrs)
+      assert %Agent{} = agent
+      assert agent.content_type == "application/json"
+      assert agent.host == "localhost"
+      assert agent.method == "GET"
+      assert agent.path == "/json/<id>"
+      assert agent.path_regex == "^/json/(?<id>[^/]+)$"
+      assert agent.port == 4000
+      assert agent.protocol == "http"
+      assert agent.responder == "RANDOM"
+      assert agent.operation == nil
+    end
+
+    test "update_agent/2 with valid data and path param with custom regex updates the agent and generates path_regex attr", %{user: user} do
+      agent = agent_fixture(user)
+      assert {:ok, agent} = Core.update_agent(agent, @update_path_param_custom_regex_attrs)
+      assert %Agent{} = agent
+      assert agent.content_type == "application/json"
+      assert agent.host == "localhost"
+      assert agent.method == "GET"
+      assert agent.path == "/json/<id:[0-9]+>"
+      assert agent.path_regex == "^/json/(?<id>[0-9]+)$"
+      assert agent.port == 4000
+      assert agent.protocol == "http"
+      assert agent.responder == "RANDOM"
+      assert agent.operation == nil
     end
 
     test "update_agent/2 with invalid data returns error changeset", %{user: user} do

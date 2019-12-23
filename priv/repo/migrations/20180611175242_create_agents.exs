@@ -8,6 +8,7 @@ defmodule Mockatron.Repo.Migrations.CreateAgents do
       add :host, :string
       add :port, :integer
       add :path, :string
+      add :path_regex, :string
       add :operation, :string
       add :content_type, :string
       add :responder, :string

@@ -52,19 +52,90 @@ defmodule MockatronWeb.Utils.Helper do
     end
   end
 
-  def load_agent(repo, %Signature{} = signature) do
-    case { signature.content_type, signature.operation } do
-      { :none, :none }  ->
-        repo.one(from a in Agent, select: a, where: ^signature.user_id == a.user_id and ^signature.method == a.method and ^signature.protocol == a.protocol and ^signature.host == a.host and ^signature.port == a.port and ^signature.path == a.path)
-      { _, :none } ->
-        repo.one(from a in Agent, select: a, where: ^signature.user_id == a.user_id and ^signature.method == a.method and ^signature.protocol == a.protocol and ^signature.host == a.host and ^signature.port == a.port and ^signature.path == a.path and ^signature.content_type == a.content_type)
-      { :none, _ } ->
-        repo.one(from a in Agent, select: a, where: ^signature.user_id == a.user_id and ^signature.method == a.method and ^signature.protocol == a.protocol and ^signature.host == a.host and ^signature.port == a.port and ^signature.path == a.path and ^signature.operation == a.operation)
+  def filter_signature_params({:__struct__, _}), do: false
+  def filter_signature_params({_, :none}), do: false
+  def filter_signature_params(_), do: true
+
+  def load_agent(%Signature{} = signature, repo) do
+    signature
+    |> Map.to_list
+    |> Enum.filter(&filter_signature_params/1)
+    |> load_agent(repo)
+    |> repo.preload([responses: from(r in Response, where: r.enable == true)])
+    |> repo.preload([filters: {from(f in Filter, where: f.enable == true, order_by: f.priority), [:request_conditions, :response_conditions]}])
+  end
+
+  def load_agent(filters, repo) when is_list(filters) do
+    case repo.one(from a in Agent, select: a, where: ^filters) do
+      %Agent{} = agent ->
+        agent
       _ ->
-        repo.one(from a in Agent, select: a, where: ^signature.user_id == a.user_id and ^signature.method == a.method and ^signature.protocol == a.protocol and ^signature.host == a.host and ^signature.port == a.port and ^signature.path == a.path and ^signature.content_type == a.content_type and ^signature.operation == a.operation)
+        filters
+        |> List.keydelete(:path, 0)
+        |> load_agent(filters |> List.keyfind(:path, 0) |> elem(1), repo)
     end
-    |> Mockatron.Repo.preload([responses: from(r in Response, where: r.enable == true)])
-    |> Mockatron.Repo.preload([filters: {from(f in Filter, where: f.enable == true, order_by: f.priority), [:request_conditions, :response_conditions]}])
+  end
+
+  def load_agent(filters, path, repo) when is_list(filters) and is_bitstring(path) do
+    path
+    |> String.split("/")
+    |> Enum.filter(&(&1 != ""))
+    |> Enum.reverse
+    |> load_agent(path, filters, repo)
+  end
+
+  def load_agent([_|rest], original_path, filters, repo) do
+    conditions = build_dynamic_conditions(filters, "/#{rest |> Enum.reverse |> Enum.join("/")}%")
+    case repo.all(from a in Agent, select: a, where: ^conditions) do
+      nil ->
+        load_agent(rest, original_path, filters, repo)
+      agents ->
+        Enum.reduce_while(agents, nil, fn agent, _acc -> reduce_agents_by_regex(original_path, agent) end)
+    end
+  end
+
+  def load_agent([], _original_path, _filters, _repo), do: nil
+
+  def reduce_agents_by_regex(original_path, %Agent{path_regex: path_regex} = agent) do
+    with {:ok, regex} <- Regex.compile(path_regex) do
+      case Regex.match?(regex, original_path) do
+        true -> {:halt, agent}
+        _ -> {:cont, nil}
+      end
+    end
+  end
+
+  def build_dynamic_conditions(filters, path) do
+    conditions = dynamic([a], like(a.path, ^path) and not is_nil(a.path_regex))
+    conditions = case List.keyfind(filters, :user_id, 0) do
+      {:user_id, user_id} -> dynamic([a], a.user_id == ^user_id and ^conditions)
+      _ -> conditions
+    end
+    conditions = case List.keyfind(filters, :method, 0) do
+      {:method, method} -> dynamic([a], a.method == ^method and ^conditions)
+      _ -> conditions
+    end
+    conditions = case List.keyfind(filters, :protocol, 0) do
+      {:protocol, protocol} -> dynamic([a], a.protocol == ^protocol and ^conditions)
+      _ -> conditions
+    end
+    conditions = case List.keyfind(filters, :host, 0) do
+      {:host, host} -> dynamic([a], a.host == ^host and ^conditions)
+      _ -> conditions
+    end
+    conditions = case List.keyfind(filters, :port, 0) do
+      {:port, port} -> dynamic([a], a.port == ^port and ^conditions)
+      _ -> conditions
+    end
+    conditions = case List.keyfind(filters, :operation, 0) do
+      {:operation, operation} -> dynamic([a], a.operation == ^operation and ^conditions)
+      _ -> conditions
+    end
+    conditions = case List.keyfind(filters, :content_type, 0) do
+      {:content_type, content_type} -> dynamic([a], a.content_type == ^content_type and ^conditions)
+      _ -> conditions
+    end
+    conditions
   end
 
   def filter_responses(%Agent{} = agent, %Filter{} = filter) do
