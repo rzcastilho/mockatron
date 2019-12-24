@@ -30,9 +30,19 @@ defmodule MockatronWeb.UserControllerTest do
   describe "sign in user" do
     setup [:create_user]
 
-    test "sign in chosen user", %{conn: conn} do
+    test "chosen user", %{conn: conn} do
       conn = post conn, user_path(conn, :sign_in), @create_attrs
       assert %{"jwt" => jwt} = json_response(conn, 200)
+    end
+
+    test "unauthorized email not found", %{conn: conn} do
+      conn = post conn, user_path(conn, :sign_in), @create_attrs |> Map.put(:email, "notfound@mockatron.io")
+      assert %{"code" => 1, "error" => "Unauthorized"} = json_response(conn, 401)
+    end
+
+    test "unauthorized invalid password", %{conn: conn} do
+      conn = post conn, user_path(conn, :sign_in), @create_attrs |> Map.put(:password, "welcome1")
+      assert %{"code" => 2, "error" => "Unauthorized"} = json_response(conn, 401)
     end
   end
 
@@ -40,4 +50,5 @@ defmodule MockatronWeb.UserControllerTest do
     user = fixture(:user)
     {:ok, user: user}
   end
+
 end

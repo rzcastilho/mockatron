@@ -83,17 +83,29 @@ defmodule MockatronWeb.AgentControllerTest do
       conn = put conn, agent_path(conn, :update, agent), agent: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
+
+    test "not found agent", %{conn: conn} do
+      conn = put conn, agent_path(conn, :update, %Agent{id: 1000}), agent: @update_attrs
+      assert response(conn, 404)
+    end
+
   end
 
   describe "delete agent" do
     setup [:create_agent]
 
-    test "deletes chosen agent", %{conn: conn, agent: agent} do
+    test "chosen agent", %{conn: conn, agent: agent} do
       conn1 = delete conn, agent_path(conn, :delete, agent)
       assert response(conn1, 204)
       conn2 = get conn, agent_path(conn, :show, agent)
       assert response(conn2, 404)
     end
+
+    test "not found agent", %{conn: conn} do
+      conn = delete conn, agent_path(conn, :delete, %Agent{id: 1000})
+      assert response(conn, 404)
+    end
+
   end
 
   defp create_agent(_) do

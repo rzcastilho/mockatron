@@ -36,13 +36,46 @@ defmodule MockatronWeb.FilterControllerTest do
   end
 
   describe "index" do
+
     test "lists all filters", %{conn: conn, agent: agent} do
       conn = get conn, agent_filter_path(conn, :index, agent)
       assert json_response(conn, 200)["data"] == []
     end
+
+    test "agent not found", %{conn: conn} do
+      conn = get conn, agent_filter_path(conn, :index, %Agent{id: 1000})
+      assert response(conn, 404)
+    end
+
+  end
+
+  describe "show" do
+    setup [:create_filter]
+
+    test "chosen filter", %{conn: conn, agent: agent, filter: %Filter{id: id}} do
+      conn = get conn, agent_filter_path(conn, :show, agent, id)
+      assert json_response(conn, 200)["data"] == %{
+               "id" => id,
+               "enable" => true,
+               "label" => "success",
+               "priority" => 0
+             }
+    end
+
+    test "filter not found", %{conn: conn, agent: agent} do
+      conn = get conn, agent_filter_path(conn, :show, agent, 1000)
+      assert response(conn, 404)
+    end
+
+    test "agent not found", %{conn: conn, filter: %Filter{id: id}} do
+      conn = get conn, agent_filter_path(conn, :show, %Agent{id: 1000}, id)
+      assert response(conn, 404)
+    end
+
   end
 
   describe "create filter" do
+
     test "renders filter when data is valid", %{conn: conn, agent: agent} do
       conn1 = post conn, agent_filter_path(conn, :create, agent), filter: @create_attrs
       assert %{"id" => id} = json_response(conn1, 201)["data"]
@@ -59,6 +92,12 @@ defmodule MockatronWeb.FilterControllerTest do
       conn = post conn, agent_filter_path(conn, :create, agent), filter: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
+
+    test "agent not found", %{conn: conn} do
+      conn = post conn, agent_filter_path(conn, :create, %Agent{id: 1000}), filter: @create_attrs
+      assert response(conn, 404)
+    end
+
   end
 
   describe "update filter" do
@@ -80,6 +119,17 @@ defmodule MockatronWeb.FilterControllerTest do
       conn = put conn, agent_filter_path(conn, :update, agent, filter), filter: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
+
+    test "filter not found", %{conn: conn, agent: agent} do
+      conn = put conn, agent_filter_path(conn, :update, agent, %Filter{id: 1000}), filter: @create_attrs
+      assert response(conn, 404)
+    end
+
+    test "agent not found", %{conn: conn, filter: filter} do
+      conn = put conn, agent_filter_path(conn, :update, %Agent{id: 1000}, filter), filter: @create_attrs
+      assert response(conn, 404)
+    end
+
   end
 
   describe "delete filter" do
@@ -91,6 +141,17 @@ defmodule MockatronWeb.FilterControllerTest do
       conn2 = get conn, agent_filter_path(conn, :show, agent, filter)
       assert response(conn2, 404)
     end
+
+    test "filter not found", %{conn: conn, agent: agent} do
+      conn = delete conn, agent_filter_path(conn, :delete, agent, %Filter{id: 1000})
+      assert response(conn, 404)
+    end
+
+    test "agent not found", %{conn: conn, filter: filter} do
+      conn = delete conn, agent_filter_path(conn, :delete, %Agent{id: 1000}, filter)
+      assert response(conn, 404)
+    end
+
   end
 
   defp create_filter(_) do

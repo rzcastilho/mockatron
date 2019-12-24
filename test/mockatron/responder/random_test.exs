@@ -70,5 +70,9 @@ defmodule Mockatron.Responder.RandomTest do
     assert @sequential_responses != current_random_responses
   end
 
+  test "get random state", %{server: pid} do
+    assert %Mockatron.Responder.Random.State{agent: agent, size: size, index: index, count: count} =
+             Mockatron.Responder.Random.state(pid)
+  end
 
 end

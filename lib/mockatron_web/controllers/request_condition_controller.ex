@@ -1,4 +1,4 @@
-  defmodule MockatronWeb.RequestConditionController do
+defmodule MockatronWeb.RequestConditionController do
   use MockatronWeb, :controller
 
   alias Mockatron.Core

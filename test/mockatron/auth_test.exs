@@ -65,5 +65,25 @@ defmodule Mockatron.AuthTest do
       user = user_fixture()
       assert %Ecto.Changeset{} = Auth.change_user(user)
     end
+
+    test "get_by_email/1 returns user" do
+      user_fixture()
+      assert {:ok, user} = Auth.get_by_email("test@mockatron.io")
+    end
+
+    test "get_by_email/1 returns email_not_found" do
+      assert {:error, :email_not_found} = Auth.get_by_email("noexists@mockatron.io")
+    end
+
+    test "token_sign_in/2 returns user" do
+      user_fixture()
+      assert {:ok, token, jwt} = Auth.token_sign_in("test@mockatron.io", "Welcome1")
+    end
+
+    test "token_sign_in/2 returns error" do
+      user_fixture()
+      assert {:error, _} = Auth.token_sign_in("test@mockatron.io", "welcome1")
+    end
+    
   end
 end
