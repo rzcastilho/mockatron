@@ -63,10 +63,10 @@ defmodule Mix.Tasks.Mockatron.Seed do
         Repo.insert!(%Response{agent_id: agent_id, label: "Error", http_code: 400, body: "{\"code\":\"99\",\"description\":\"Error\"}", enable: true})
         Repo.insert!(%Response{agent_id: agent_id, label: "Error", http_code: 500, body: "{\"code\":\"99\",\"description\":\"Error Again\"}", enable: true})
         %{id: filter_id} = Repo.insert!(%Filter{agent_id: agent_id, label: "Success", priority: 0})
-        Repo.insert!(%RequestCondition{filter_id: filter_id, field_type: "QUERY_PARAM", header_or_query_param: "status", operator: "EQUALS", value: "success"})
+        Repo.insert!(%RequestCondition{filter_id: filter_id, field_type: "QUERY_PARAM", param_name: "status", operator: "EQUALS", value: "success"})
         Repo.insert!(%ResponseCondition{filter_id: filter_id, field_type: "LABEL", operator: "EQUALS", value: "Success"})
         %{id: filter_id} = Repo.insert!(%Filter{agent_id: agent_id, label: "Error", priority: 1})
-        Repo.insert!(%RequestCondition{filter_id: filter_id, field_type: "QUERY_PARAM", header_or_query_param: "status", operator: "EQUALS", value: "error"})
+        Repo.insert!(%RequestCondition{filter_id: filter_id, field_type: "QUERY_PARAM", param_name: "status", operator: "EQUALS", value: "error"})
         Repo.insert!(%ResponseCondition{filter_id: filter_id, field_type: "LABEL", operator: "EQUALS", value: "Error"})
       _ ->
         :exists
@@ -80,10 +80,10 @@ defmodule Mix.Tasks.Mockatron.Seed do
         Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: "{\"code\":\"0\",\"description\":\"Success Again\"}", enable: true})
         Repo.insert!(%Response{agent_id: agent_id, label: "Error", http_code: 500, body: "{\"code\":\"99\",\"description\":\"Error Again\"}", enable: true})
         %{id: filter_id} = Repo.insert!(%Filter{agent_id: agent_id, label: "Success", priority: 0})
-        Repo.insert!(%RequestCondition{filter_id: filter_id, field_type: "QUERY_PARAM", header_or_query_param: "status", operator: "EQUALS", value: "success"})
+        Repo.insert!(%RequestCondition{filter_id: filter_id, field_type: "QUERY_PARAM", param_name: "status", operator: "EQUALS", value: "success"})
         Repo.insert!(%ResponseCondition{filter_id: filter_id, field_type: "LABEL", operator: "EQUALS", value: "Success"})
         %{id: filter_id} = Repo.insert!(%Filter{agent_id: agent_id, label: "Error", priority: 1})
-        Repo.insert!(%RequestCondition{filter_id: filter_id, field_type: "QUERY_PARAM", header_or_query_param: "status", operator: "EQUALS", value: "error"})
+        Repo.insert!(%RequestCondition{filter_id: filter_id, field_type: "QUERY_PARAM", param_name: "status", operator: "EQUALS", value: "error"})
         Repo.insert!(%ResponseCondition{filter_id: filter_id, field_type: "LABEL", operator: "EQUALS", value: "Error"})
       _ ->
         :exists

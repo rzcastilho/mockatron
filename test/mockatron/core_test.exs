@@ -265,9 +265,9 @@ defmodule Mockatron.CoreTest do
   describe "request_conditions" do
     alias Mockatron.Core.RequestCondition
 
-    @valid_attrs %{field_type: "BODY", header_or_query_param: nil, operator: "REGEX", value: "OK"}
-    @update_attrs %{field_type: "QUERY_PARAM", header_or_query_param: "status", operator: "EQUALS", value: "success"}
-    @invalid_attrs %{field_type: nil, header_or_query_param: nil, operator: nil, value: nil}
+    @valid_attrs %{field_type: "BODY", param_name: nil, operator: "REGEX", value: "OK"}
+    @update_attrs %{field_type: "QUERY_PARAM", param_name: "status", operator: "EQUALS", value: "success"}
+    @invalid_attrs %{field_type: nil, param_name: nil, operator: nil, value: nil}
 
     setup do
       {:ok, user} = Mockatron.Auth.create_user(@user_valid_attrs)
@@ -298,7 +298,7 @@ defmodule Mockatron.CoreTest do
     test "create_request_condition/1 with valid data creates a request_condition", %{filter: filter} do
       assert {:ok, %RequestCondition{} = request_condition} = Core.create_request_condition(@valid_attrs, filter)
       assert request_condition.field_type == "BODY"
-      assert request_condition.header_or_query_param == nil
+      assert request_condition.param_name == nil
       assert request_condition.operator == "REGEX"
       assert request_condition.value == "OK"
     end
@@ -312,7 +312,7 @@ defmodule Mockatron.CoreTest do
       assert {:ok, request_condition} = Core.update_request_condition(request_condition, @update_attrs)
       assert %RequestCondition{} = request_condition
       assert request_condition.field_type == "QUERY_PARAM"
-      assert request_condition.header_or_query_param == "status"
+      assert request_condition.param_name == "status"
       assert request_condition.operator == "EQUALS"
       assert request_condition.value == "success"
     end

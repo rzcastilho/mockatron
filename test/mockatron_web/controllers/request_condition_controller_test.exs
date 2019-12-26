@@ -16,9 +16,9 @@ defmodule MockatronWeb.RequestConditionControllerTest do
   @agent_valid_attrs %{content_type: "application/json", host: "localhost", method: "GET", path: "/json", port: 4000, protocol: "http", responder: "RANDOM"}
   @filter_valid_attrs %{enable: true, label: "success", priority: 0}
 
-  @create_attrs %{field_type: "BODY", header_or_query_param: nil, operator: "REGEX", value: "OK"}
-  @update_attrs %{field_type: "QUERY_PARAM", header_or_query_param: "status", operator: "EQUALS", value: "success"}
-  @invalid_attrs %{field_type: nil, header_or_query_param: nil, operator: nil, value: nil}
+  @create_attrs %{field_type: "BODY", param_name: nil, operator: "REGEX", value: "OK"}
+  @update_attrs %{field_type: "QUERY_PARAM", param_name: "status", operator: "EQUALS", value: "success"}
+  @invalid_attrs %{field_type: nil, param_name: nil, operator: nil, value: nil}
 
   def fixture(:request_condition) do
     filter = Repo.one(from a in Filter, select: a, where: a.label == "success" and a.priority == 0 and a.enable == true)
@@ -64,7 +64,7 @@ defmodule MockatronWeb.RequestConditionControllerTest do
       assert json_response(conn, 200)["data"] == %{
                "id" => id,
                "field_type" => "BODY",
-               "header_or_query_param" => nil,
+               "param_name" => nil,
                "operator" => "REGEX",
                "value" => "OK"
              }
@@ -97,7 +97,7 @@ defmodule MockatronWeb.RequestConditionControllerTest do
       assert json_response(conn2, 200)["data"] == %{
         "id" => id,
         "field_type" => "BODY",
-        "header_or_query_param" => nil,
+        "param_name" => nil,
         "operator" => "REGEX",
         "value" => "OK"}
     end
@@ -130,7 +130,7 @@ defmodule MockatronWeb.RequestConditionControllerTest do
       assert json_response(conn2, 200)["data"] == %{
         "id" => id,
         "field_type" => "QUERY_PARAM",
-        "header_or_query_param" => "status",
+        "param_name" => "status",
         "operator" => "EQUALS",
         "value" => "success"}
     end
