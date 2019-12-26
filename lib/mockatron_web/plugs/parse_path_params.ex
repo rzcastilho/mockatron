@@ -4,7 +4,7 @@ defmodule MockatronWeb.ParsePathParams do
 
   def init([]), do: []
 
-  def call(%Plug.Conn{assigns: %{mockatron: %{agent: %{agent: %Agent{path_regex: nil}}}}} = conn, _) do
+  def call(%Plug.Conn{assigns: %{mockatron: %{agent: %{found: false}}}} = conn, _) do
     conn
   end
 

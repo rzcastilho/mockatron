@@ -20,7 +20,6 @@ defmodule MockatronWeb.Router do
     plug MockatronWeb.FindCache, cache: :agent
     plug MockatronWeb.LoadAgent, repo: Mockatron.Repo
     plug MockatronWeb.ParsePathParams
-    plug MockatronWeb.InspectConn
     plug MockatronWeb.FilterMatch
     plug MockatronWeb.FindCache, cache: :responder
     plug MockatronWeb.LoadResponder
