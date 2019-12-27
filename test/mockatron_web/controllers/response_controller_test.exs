@@ -36,13 +36,47 @@ defmodule MockatronWeb.ResponseControllerTest do
   end
 
   describe "index" do
+
     test "lists all responses", %{conn: conn, agent: agent} do
       conn = get conn, agent_response_path(conn, :index, agent)
       assert json_response(conn, 200)["data"] == []
     end
+
+    test "agent not found", %{conn: conn} do
+      conn = get conn, agent_response_path(conn, :index, %Agent{id: 1000})
+      assert response(conn, 404)
+    end
+
+  end
+
+  describe "show" do
+    setup [:create_response]
+
+    test "chosen response", %{conn: conn, agent: agent, response: %Response{id: id}} do
+      conn = get conn, agent_response_path(conn, :show, agent, id)
+      assert json_response(conn, 200)["data"] == %{
+               "id" => id,
+               "body" => "{\n  \"code\":0,\n  \"message\":\"Success\"\n}",
+               "enable" => true,
+               "http_code" => 200,
+               "label" => "success"
+             }
+    end
+
+    test "response not found", %{conn: conn, agent: agent} do
+      conn = get conn, agent_response_path(conn, :show, agent, 1000)
+      assert response(conn, 404)
+    end
+
+    test "agent not found", %{conn: conn, response: %Response{id: id}} do
+      conn = get conn, agent_response_path(conn, :show, %Agent{id: 1000}, id)
+      assert response(conn, 404)
+    end
+
   end
 
   describe "create response" do
+
     test "renders response when data is valid", %{conn: conn, agent: agent} do
       conn1 = post conn, agent_response_path(conn, :create, agent), response: @create_attrs
       assert %{"id" => id} = json_response(conn1, 201)["data"]
@@ -60,6 +94,12 @@ defmodule MockatronWeb.ResponseControllerTest do
       conn = post conn, agent_response_path(conn, :create, agent), response: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
+
+    test "agent not found", %{conn: conn} do
+      conn = post conn, agent_response_path(conn, :create, %Agent{id: 1000}), response: @create_attrs
+      assert response(conn, 404)
+    end
+
   end
 
   describe "update response" do
@@ -82,6 +122,17 @@ defmodule MockatronWeb.ResponseControllerTest do
       conn = put conn, agent_response_path(conn, :update, agent, response), response: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
+
+    test "response not found", %{conn: conn, agent: agent} do
+      conn = put conn, agent_response_path(conn, :update, agent, %Response{id: 1000}), response: @create_attrs
+      assert response(conn, 404)
+    end
+
+    test "agent not found", %{conn: conn, response: response} do
+      conn = put conn, agent_response_path(conn, :update, %Agent{id: 1000}, response), response: @create_attrs
+      assert response(conn, 404)
+    end
+
   end
 
   describe "delete response" do
@@ -93,6 +144,17 @@ defmodule MockatronWeb.ResponseControllerTest do
       conn2 = get conn, agent_response_path(conn, :show, agent, response)
       assert response(conn2, 404)
     end
+
+    test "response not found", %{conn: conn, agent: agent} do
+      conn = delete conn, agent_response_path(conn, :delete, agent, %Response{id: 1000})
+      assert response(conn, 404)
+    end
+
+    test "agent not found", %{conn: conn, response: response} do
+      conn = delete conn, agent_response_path(conn, :delete, %Agent{id: 1000}, response)
+      assert response(conn, 404)
+    end
+  
   end
 
   defp create_response(_) do

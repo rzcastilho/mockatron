@@ -5,7 +5,7 @@ defmodule Mockatron.Repo.Migrations.CreateRequestConditions do
     create table(:request_conditions) do
       add :field_type, :string
       add :operator, :string
-      add :header_or_query_param, :string
+      add :param_name, :string
       add :value, :string
       add :filter_id, references(:filters, on_delete: :delete_all)
 

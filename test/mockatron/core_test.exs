@@ -12,6 +12,8 @@ defmodule Mockatron.CoreTest do
 
     @valid_attrs @agent_valid_attrs
     @update_attrs %{content_type: "text/xml", host: "localhost", method: "POST", path: "/xml", port: 8080, protocol: "https", responder: "SEQUENTIAL", operation: "do"}
+    @update_path_param_attrs %{content_type: "application/json", host: "localhost", method: "GET", path: "/json/<id>", port: 4000, protocol: "http", responder: "RANDOM", operation: nil}
+    @update_path_param_custom_regex_attrs %{content_type: "application/json", host: "localhost", method: "GET", path: "/json/<id:[0-9]+>", port: 4000, protocol: "http", responder: "RANDOM", operation: nil}
     @invalid_attrs %{content_type: nil, host: nil, method: nil, path: nil, port: nil, protocol: nil, responder: nil}
 
     setup do
@@ -44,6 +46,7 @@ defmodule Mockatron.CoreTest do
       assert agent.host == "localhost"
       assert agent.method == "GET"
       assert agent.path == "/json"
+      assert agent.path_regex == nil
       assert agent.port == 4000
       assert agent.protocol == "http"
       assert agent.responder == "RANDOM"
@@ -62,10 +65,41 @@ defmodule Mockatron.CoreTest do
       assert agent.host == "localhost"
       assert agent.method == "POST"
       assert agent.path == "/xml"
+      assert agent.path_regex == nil
       assert agent.port == 8080
       assert agent.protocol == "https"
       assert agent.responder == "SEQUENTIAL"
       assert agent.operation == "do"
+    end
+
+    test "update_agent/2 with valid data and path param updates the agent and generates path_regex attr", %{user: user} do
+      agent = agent_fixture(user)
+      assert {:ok, agent} = Core.update_agent(agent, @update_path_param_attrs)
+      assert %Agent{} = agent
+      assert agent.content_type == "application/json"
+      assert agent.host == "localhost"
+      assert agent.method == "GET"
+      assert agent.path == "/json/<id>"
+      assert agent.path_regex == "^/json/(?<id>[^/]+)$"
+      assert agent.port == 4000
+      assert agent.protocol == "http"
+      assert agent.responder == "RANDOM"
+      assert agent.operation == nil
+    end
+
+    test "update_agent/2 with valid data and path param with custom regex updates the agent and generates path_regex attr", %{user: user} do
+      agent = agent_fixture(user)
+      assert {:ok, agent} = Core.update_agent(agent, @update_path_param_custom_regex_attrs)
+      assert %Agent{} = agent
+      assert agent.content_type == "application/json"
+      assert agent.host == "localhost"
+      assert agent.method == "GET"
+      assert agent.path == "/json/<id:[0-9]+>"
+      assert agent.path_regex == "^/json/(?<id>[0-9]+)$"
+      assert agent.port == 4000
+      assert agent.protocol == "http"
+      assert agent.responder == "RANDOM"
+      assert agent.operation == nil
     end
 
     test "update_agent/2 with invalid data returns error changeset", %{user: user} do
@@ -231,9 +265,9 @@ defmodule Mockatron.CoreTest do
   describe "request_conditions" do
     alias Mockatron.Core.RequestCondition
 
-    @valid_attrs %{field_type: "BODY", header_or_query_param: nil, operator: "REGEX", value: "OK"}
-    @update_attrs %{field_type: "QUERY_PARAM", header_or_query_param: "status", operator: "EQUALS", value: "success"}
-    @invalid_attrs %{field_type: nil, header_or_query_param: nil, operator: nil, value: nil}
+    @valid_attrs %{field_type: "BODY", param_name: nil, operator: "REGEX", value: "OK"}
+    @update_attrs %{field_type: "QUERY_PARAM", param_name: "status", operator: "EQUALS", value: "success"}
+    @invalid_attrs %{field_type: nil, param_name: nil, operator: nil, value: nil}
 
     setup do
       {:ok, user} = Mockatron.Auth.create_user(@user_valid_attrs)
@@ -264,7 +298,7 @@ defmodule Mockatron.CoreTest do
     test "create_request_condition/1 with valid data creates a request_condition", %{filter: filter} do
       assert {:ok, %RequestCondition{} = request_condition} = Core.create_request_condition(@valid_attrs, filter)
       assert request_condition.field_type == "BODY"
-      assert request_condition.header_or_query_param == nil
+      assert request_condition.param_name == nil
       assert request_condition.operator == "REGEX"
       assert request_condition.value == "OK"
     end
@@ -278,7 +312,7 @@ defmodule Mockatron.CoreTest do
       assert {:ok, request_condition} = Core.update_request_condition(request_condition, @update_attrs)
       assert %RequestCondition{} = request_condition
       assert request_condition.field_type == "QUERY_PARAM"
-      assert request_condition.header_or_query_param == "status"
+      assert request_condition.param_name == "status"
       assert request_condition.operator == "EQUALS"
       assert request_condition.value == "success"
     end

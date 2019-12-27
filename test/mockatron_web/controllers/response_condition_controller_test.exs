@@ -38,13 +38,56 @@ defmodule MockatronWeb.ResponseConditionControllerTest do
   end
 
   describe "index" do
+
     test "lists all response_conditions", %{conn: conn, filter: filter} do
       conn = get conn, agent_filter_response_condition_path(conn, :index, filter.agent_id, filter)
       assert json_response(conn, 200)["data"] == []
     end
+
+    test "agent not found", %{conn: conn, filter: filter} do
+      conn = get conn, agent_filter_response_condition_path(conn, :index, 1000, filter)
+      assert response(conn, 404)
+    end
+
+    test "filter not found", %{conn: conn, filter: filter} do
+      conn = get conn, agent_filter_response_condition_path(conn, :index, filter.agent_id, %Filter{id: 1000})
+      assert response(conn, 404)
+    end
+
+  end
+
+  describe "show" do
+    setup [:create_response_condition]
+
+    test "chosen response condition", %{conn: conn, filter: filter, response_condition: %ResponseCondition{id: id}} do
+      conn = get conn, agent_filter_response_condition_path(conn, :show, filter.agent_id, filter, id)
+      assert json_response(conn, 200)["data"] == %{
+               "id" => id,
+               "field_type" => "LABEL",
+               "operator" => "STARTSWITH",
+               "value" => "Success"
+             }
+    end
+
+    test "response condition not found", %{conn: conn, filter: filter} do
+      conn = get conn, agent_filter_response_condition_path(conn, :show, filter.agent_id, filter, 1000)
+      assert response(conn, 404)
+    end
+
+    test "filter not found", %{conn: conn, filter: filter, response_condition: %ResponseCondition{id: id}} do
+      conn = get conn, agent_filter_response_condition_path(conn, :show, filter.agent_id, %Filter{id: 1000}, id)
+      assert response(conn, 404)
+    end
+
+    test "agent not found", %{conn: conn, filter: filter, response_condition: %ResponseCondition{id: id}} do
+      conn = get conn, agent_filter_response_condition_path(conn, :show, 1000, filter, id)
+      assert response(conn, 404)
+    end
+
   end
 
   describe "create response_condition" do
+    
     test "renders response_condition when data is valid", %{conn: conn, filter: filter} do
       conn1 = post conn, agent_filter_response_condition_path(conn, :create, filter.agent_id, filter), response_condition: @create_attrs
       assert %{"id" => id} = json_response(conn1, 201)["data"]
@@ -61,6 +104,17 @@ defmodule MockatronWeb.ResponseConditionControllerTest do
       conn = post conn, agent_filter_response_condition_path(conn, :create, filter.agent_id, filter), response_condition: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
+
+    test "filter not found", %{conn: conn, filter: filter} do
+      conn = post conn, agent_filter_response_condition_path(conn, :create, filter.agent_id, %Filter{id: 1000}), response_condition: @create_attrs
+      assert response(conn, 404)
+    end
+
+    test "agent not found", %{conn: conn, filter: filter} do
+      conn = post conn, agent_filter_response_condition_path(conn, :create, 1000, filter), response_condition: @create_attrs
+      assert response(conn, 404)
+    end
+  
   end
 
   describe "update response_condition" do
@@ -82,6 +136,21 @@ defmodule MockatronWeb.ResponseConditionControllerTest do
       conn = put conn, agent_filter_response_condition_path(conn, :update, filter.agent_id, filter, response_condition), response_condition: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
+
+    test "response condition not found", %{conn: conn, filter: filter} do
+      conn = put conn, agent_filter_response_condition_path(conn, :update, filter.agent_id, filter, %ResponseCondition{id: 1000}), response_condition: @create_attrs
+      assert response(conn, 404)
+    end
+
+    test "filter not found", %{conn: conn, filter: filter, response_condition: response_condition} do
+      conn = put conn, agent_filter_response_condition_path(conn, :update, filter.agent_id, %Filter{id: 1000}, response_condition), response_condition: @create_attrs
+      assert response(conn, 404)
+    end
+
+    test "agent not found", %{conn: conn, filter: filter, response_condition: response_condition} do
+      conn = put conn, agent_filter_response_condition_path(conn, :update, 1000, filter, response_condition), response_condition: @create_attrs
+      assert response(conn, 404)
+    end
   end
 
   describe "delete response_condition" do
@@ -93,6 +162,22 @@ defmodule MockatronWeb.ResponseConditionControllerTest do
       conn2 = get conn, agent_filter_response_condition_path(conn, :show, filter.agent_id, filter, response_condition)
       assert response(conn2, 404)
     end
+
+    test "response condition not found", %{conn: conn, filter: filter} do
+      conn = delete conn, agent_filter_response_condition_path(conn, :delete, filter.agent_id, filter, %ResponseCondition{id: 1000})
+      assert response(conn, 404)
+    end
+
+    test "filter not found", %{conn: conn, filter: filter, response_condition: response_condition} do
+      conn = delete conn, agent_filter_response_condition_path(conn, :delete, filter.agent_id, %Filter{id: 1000}, response_condition)
+      assert response(conn, 404)
+    end
+
+    test "agent not found", %{conn: conn, filter: filter, response_condition: response_condition} do
+      conn = delete conn, agent_filter_response_condition_path(conn, :delete, 1000, filter, response_condition)
+      assert response(conn, 404)
+    end
+  
   end
 
   defp create_response_condition(_) do

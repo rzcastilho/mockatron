@@ -70,5 +70,9 @@ defmodule Mockatron.Responder.SequentialTest do
     assert @sequential_responses == current_sequential_responses
   end
 
+  test "get sequential state", %{server: pid} do
+    assert %Mockatron.Responder.Sequential.State{agent: agent, size: size, index: index, count: count} =
+             Mockatron.Responder.Sequential.state(pid)
+  end
 
 end

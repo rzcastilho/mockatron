@@ -38,8 +38,7 @@ defmodule MockatronWeb.Init do
         Map.merge(signature, %{operation: soapaction})
     end
     conn
-    |> assign(:mockatron, %AgentResponder{signature: signature,
-                                          agent: %Agent{hash: Helper.agent_hash(signature)}})
+    |> assign(:mockatron, %AgentResponder{signature: signature, agent: %Agent{hash: Helper.agent_hash(signature)}})
   end
 
 end

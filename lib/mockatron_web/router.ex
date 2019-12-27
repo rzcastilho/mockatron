@@ -18,8 +18,8 @@ defmodule MockatronWeb.Router do
   pipeline :mock do
     plug MockatronWeb.Init
     plug MockatronWeb.FindCache, cache: :agent
-    plug MockatronWeb.InspectConn
     plug MockatronWeb.LoadAgent, repo: Mockatron.Repo
+    plug MockatronWeb.ParsePathParams
     plug MockatronWeb.FilterMatch
     plug MockatronWeb.FindCache, cache: :responder
     plug MockatronWeb.LoadResponder
