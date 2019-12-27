@@ -3,7 +3,7 @@ defmodule Mockatron.Core.Response do
   import Ecto.Changeset
 
   schema "responses" do
-    field :body, :string
+    field :body, :string, default: ""
     field :enable, :boolean, default: true
     field :http_code, :integer
     field :label, :string

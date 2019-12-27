@@ -45,7 +45,7 @@ defmodule MockatronWeb.FilterMatch do
 
   defp do_evaluate_request_condition(_, []), do: true
 
-  defp do_evaluate_request_condition(%{query_params: query_params} = conn, [%{field_type: "QUERY_PARAM", header_or_query_param: query_param, operator: operator, value: value} = _|request_conditions]) do
+  defp do_evaluate_request_condition(%{query_params: query_params} = conn, [%{field_type: "QUERY_PARAM", param_name: query_param, operator: operator, value: value} = _|request_conditions]) do
     case query_params do
       %{^query_param => param_value} ->
         case Helper.assert(param_value, operator, value) do
@@ -57,10 +57,23 @@ defmodule MockatronWeb.FilterMatch do
       _ ->
         false
     end
-
   end
 
-  defp do_evaluate_request_condition(%{req_headers: req_headers} = conn, [%{field_type: "HEADER", header_or_query_param: header, operator: operator, value: value} = _|request_conditions]) do
+  defp do_evaluate_request_condition(%{assigns: %{path_params: path_params}} = conn, [%{field_type: "PATH_PARAM", param_name: path_param, operator: operator, value: value} = _|request_conditions]) do
+    case path_params do
+      %{^path_param => param_value} ->
+        case Helper.assert(param_value, operator, value) do
+          true ->
+            do_evaluate_request_condition(conn, request_conditions)
+          _ ->
+            false
+        end
+      _ ->
+        false
+    end
+  end
+
+  defp do_evaluate_request_condition(%{req_headers: req_headers} = conn, [%{field_type: "HEADER", param_name: header, operator: operator, value: value} = _|request_conditions]) do
     case req_headers do
       %{^header => header_value} ->
         case Helper.assert(header_value, operator, value) do

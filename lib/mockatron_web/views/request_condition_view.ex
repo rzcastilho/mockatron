@@ -14,7 +14,7 @@ defmodule MockatronWeb.RequestConditionView do
     %{id: request_condition.id,
       field_type: request_condition.field_type,
       operator: request_condition.operator,
-      header_or_query_param: request_condition.header_or_query_param,
+      param_name: request_condition.param_name,
       value: request_condition.value}
   end
 end
