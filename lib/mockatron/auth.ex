@@ -41,6 +41,27 @@ defmodule Mockatron.Auth do
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
+  Gets a single user.
+
+  ## Examples
+
+      iex> get_user(123)
+      {:ok, %User{}}
+
+      iex> get_user(456)
+      {:error, :not_found}
+
+  """
+  def get_user(id) do
+    case Repo.get(User, id) do
+      %User{} = user ->
+        {:ok, user}
+      _ ->
+        {:error, :not_found}
+    end
+  end
+
+  @doc """
   Creates a user.
 
   ## Examples
@@ -129,11 +150,19 @@ defmodule Mockatron.Auth do
 
   def token_sign_in(email, password) do
     case email_password_auth(email, password) do
-      {:ok, user} ->
+      {:ok, %User{verified: true} = user} ->
         Guardian.encode_and_sign(user)
+      {:ok, %User{}} ->
+        {:error, :email_not_verified}
       error ->
         error
     end
+  end
+
+  def mark_as_verified(%User{} = user) do
+    user
+    |> User.changeset(%{verified: true})
+    |> Repo.update()
   end
 
 end

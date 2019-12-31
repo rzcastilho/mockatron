@@ -36,3 +36,31 @@ config :mockatron, MockatronWeb.Endpoint,
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
+
+mailgun_domain =
+  System.get_env("MAILGUN_DOMAIN") ||
+    raise """
+    environment variable MAILGUN_DOMAIN is missing.
+    """
+
+mailgun_api_key =
+  System.get_env("MAILGUN_API_KEY") ||
+    raise """
+    environment variable MAILGUN_API_KEY is missing.
+    """
+
+config :mockatron, Mockatron.Mailer,
+  adapter: Bamboo.MailgunAdapter,
+  api_key: mailgun_api_key,
+  domain: mailgun_domain
+
+secret_key =
+  System.get_env("SECRET_KEY") ||
+    raise """
+    environment variable SECRET_KEY is missing.
+    You can generate one by calling: mix phx.gen.secret
+    """
+
+config :mockatron, Mockatron.Guardian,
+  issuer: "mockatron",
+  secret_key: secret_key

@@ -5,4 +5,5 @@ defmodule MockatronWeb.PageControllerTest do
     conn = get conn, "/v1/mockatron/ui"
     assert html_response(conn, 200) =~ "Welcome to Phoenix!"
   end
+
 end

@@ -6,9 +6,9 @@ defmodule Mockatron.AuthTest do
   describe "users" do
     alias Mockatron.Auth.User
 
-    @valid_attrs %{email: "test@mockatron.io", password: "Welcome1", password_confirmation: "Welcome1", verified: true}
-    @update_attrs %{email: "contact@mockatron.io", password: "Welcome1", password_confirmation: "Welcome1", verified: false}
-    @invalid_attrs %{email: nil, password_hash: nil, verified: nil}
+    @valid_attrs %{email: "test@mockatron.io", password: "Welcome1", password_confirmation: "Welcome1"}
+    @update_attrs %{email: "contact@mockatron.io", password: "Welcome1", password_confirmation: "Welcome1"}
+    @invalid_attrs %{email: nil, password_hash: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -34,7 +34,7 @@ defmodule Mockatron.AuthTest do
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Auth.create_user(@valid_attrs)
       assert user.email == "test@mockatron.io"
-      assert user.verified == true
+      assert user.verified == false
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -75,15 +75,21 @@ defmodule Mockatron.AuthTest do
       assert {:error, :email_not_found} = Auth.get_by_email("noexists@mockatron.io")
     end
 
+    test "token_sign_in/2 returns email not verified error" do
+      user_fixture()
+      assert {:error, :email_not_verified} = Auth.token_sign_in("test@mockatron.io", "Welcome1")
+    end
+
+    test "token_sign_in/2 returns invalid password error" do
+      user_fixture()
+      assert {:error, :invalid_password} = Auth.token_sign_in("test@mockatron.io", "welcome1")
+    end
+
     test "token_sign_in/2 returns user" do
       user_fixture()
+      |> Auth.mark_as_verified()
       assert {:ok, token, jwt} = Auth.token_sign_in("test@mockatron.io", "Welcome1")
     end
 
-    test "token_sign_in/2 returns error" do
-      user_fixture()
-      assert {:error, _} = Auth.token_sign_in("test@mockatron.io", "welcome1")
-    end
-    
   end
 end
