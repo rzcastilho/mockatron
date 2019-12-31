@@ -9,6 +9,9 @@ config :mockatron, Mockatron.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
+config :mockatron, Mockatron.Mailer,
+  adapter: Bamboo.TestAdapter
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #

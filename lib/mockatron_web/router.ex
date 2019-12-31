@@ -33,6 +33,7 @@ defmodule MockatronWeb.Router do
     pipe_through :api
     post "/sign_up", UserController, :create
     post "/sign_in", UserController, :sign_in
+    get "/verify", UserController, :verify_email
   end
 
   scope "/v1/mockatron/ui", MockatronWeb do

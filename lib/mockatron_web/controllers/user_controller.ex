@@ -1,17 +1,23 @@
 defmodule MockatronWeb.UserController do
   use MockatronWeb, :controller
 
+  alias Mockatron.Email
+  alias Mockatron.Mailer
+
   alias Mockatron.Auth
   alias Mockatron.Auth.User
-
-  alias Mockatron.Guardian
+  alias Mockatron.Token
 
   action_fallback MockatronWeb.FallbackController
 
   def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Auth.create_user(user_params),
-         {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
-      conn |> render("jwt.json", jwt: token)
+    with {:ok, %User{} = user} <- Auth.create_user(user_params) do
+      token = Token.generate_new_account_token(user)
+      verification_url = Routes.user_path(conn, :verify_email, token: token)
+      Email.verify_email(user.email, verification_url)
+      |> Mailer.deliver_later()
+      conn
+      |> send_resp(:created, "")
     end
   end
 
@@ -24,5 +30,19 @@ defmodule MockatronWeb.UserController do
     end
   end
 
+  def verify_email(conn, %{"token" => token}) do
+    with {:ok, user_id} <- Token.verify_new_account_token(token),
+         {:ok, %User{verified: false} = user} <- Auth.get_user(user_id) do
+      Auth.mark_as_verified(user)
+      conn
+      |> send_resp(:no_content, "")
+    else
+      _ -> {:error, :invalid_account_verification_token}
+    end
+  end
+
+  def verify_email(_, _) do
+    {:error, :invalid_account_verification_token}
+  end
 
 end

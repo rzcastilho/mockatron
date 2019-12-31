@@ -16,6 +16,12 @@ defmodule Mockatron.Auth.User do
   end
 
   @doc false
+  def changeset(user, %{verified: true} = attrs) do
+    user
+    |> cast(attrs, [:verified])
+  end
+
+  @doc false
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:email, :password, :password_confirmation, :verified])

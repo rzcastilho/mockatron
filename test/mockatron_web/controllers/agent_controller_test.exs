@@ -7,7 +7,7 @@ defmodule MockatronWeb.AgentControllerTest do
   alias Mockatron.Guardian
   alias Mockatron.Auth
 
-  @user_valid_attrs %{email: "test@mockatron.io", password: "Welcome1", password_confirmation: "Welcome1", verified: true}
+  @user_valid_attrs %{email: "test@mockatron.io", password: "Welcome1", password_confirmation: "Welcome1"}
 
   @create_attrs %{content_type: "application/json", host: "localhost", method: "GET", path: "/json", port: 4000, protocol: "http", responder: "RANDOM"}
   @update_attrs %{content_type: "text/xml", host: "localhost", method: "POST", path: "/xml", port: 8080, protocol: "https", responder: "SEQUENTIAL", operation: "do"}
@@ -21,6 +21,7 @@ defmodule MockatronWeb.AgentControllerTest do
 
   setup %{conn: conn} do
     {:ok, user} = Auth.create_user(@user_valid_attrs)
+    Auth.mark_as_verified(user)
     {:ok, token, _} = Guardian.encode_and_sign(user, %{}, token_type: :access)
     conn = conn
     |> put_req_header("accept", "application/json")
