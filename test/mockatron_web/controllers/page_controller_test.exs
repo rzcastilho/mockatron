@@ -3,7 +3,7 @@ defmodule MockatronWeb.PageControllerTest do
 
   test "GET /v1/mockatron/ui", %{conn: conn} do
     conn = get conn, "/v1/mockatron/ui"
-    assert html_response(conn, 200) =~ "Welcome to Phoenix!"
+    assert html_response(conn, 200) =~ "mockatron.io"
   end
 
 end
