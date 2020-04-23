@@ -41,8 +41,22 @@ defmodule MockatronWeb.UserController do
     end
   end
 
-  def verify_email(_, _) do
-    {:error, :invalid_account_verification_token}
+  def verify_email(_, _), do: {:error, :bad_request, "Token not provided"}
+
+  def resend_token(conn, %{"email" => email}) do
+    case Auth.get_by_email(email) do
+      {:ok, %User{} = user} ->
+        token = Token.generate_new_account_token(user)
+        verification_url = Routes.user_path(conn, :verify_email, token: token)
+        Email.verify_email(user.email, verification_url)
+        |> Mailer.deliver_later()
+        conn
+        |> send_resp(:no_content, "")
+      _ ->
+        {:error, :email_not_found}
+    end
   end
+
+  def resend_token(_, _), do: {:error, :bad_request, "Email not provided"}
 
 end

@@ -2,6 +2,7 @@ defmodule MockatronWeb.UserControllerTest do
   use MockatronWeb.ConnCase
 
   alias Mockatron.Auth
+  alias Mockatron.Auth.User
   alias Mockatron.Token
 
   @create_attrs %{email: "test@mockatron.io", password: "Welcome1", password_confirmation: "Welcome1"}
@@ -41,6 +42,31 @@ defmodule MockatronWeb.UserControllerTest do
       assert %{"code" => 4, "error" => "Unauthorized"} = json_response(conn, 401)
     end
 
+    test "bad request", %{conn: conn} do
+      conn = get conn, user_path(conn, :verify_email)
+      assert %{"code" => 99, "error" => "Bad Request"} = json_response(conn, 400)
+    end
+
+  end
+
+  describe "resend token" do
+    setup [:create_user]
+
+    test "token resended", %{conn: conn, user: %User{email: email}} do
+      conn = get conn, user_path(conn, :resend_token, email: email)
+      assert response(conn, 204)
+    end
+
+    test "unauthorized email not found", %{conn: conn} do
+      conn = get conn, user_path(conn, :resend_token, email: "notfound@mockatron.io")
+      assert %{"code" => 1, "error" => "Unauthorized"} = json_response(conn, 401)
+    end
+
+    test "bad request", %{conn: conn} do
+      conn = get conn, user_path(conn, :resend_token)
+      assert %{"code" => 99, "error" => "Bad Request"} = json_response(conn, 400)
+    end
+
   end
 
   describe "sign in user" do
@@ -57,15 +83,15 @@ defmodule MockatronWeb.UserControllerTest do
       assert %{"code" => 1, "error" => "Unauthorized"} = json_response(conn, 401)
     end
 
-    test "unauthorized email not verified", %{conn: conn} do
-      conn = post conn, user_path(conn, :sign_in), @create_attrs
-      assert %{"code" => 3, "error" => "Unauthorized"} = json_response(conn, 401)
-    end
-
     test "unauthorized invalid password", %{conn: conn, token: token} do
       get conn, user_path(conn, :verify_email, token: token)
       conn = post conn, user_path(conn, :sign_in), @create_attrs |> Map.put(:password, "welcome1")
       assert %{"code" => 2, "error" => "Unauthorized"} = json_response(conn, 401)
+    end
+
+    test "unauthorized email not verified", %{conn: conn} do
+      conn = post conn, user_path(conn, :sign_in), @create_attrs
+      assert %{"code" => 3, "error" => "Unauthorized"} = json_response(conn, 401)
     end
 
   end
