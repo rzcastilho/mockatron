@@ -42,4 +42,10 @@ defmodule MockatronWeb.FallbackController do
     |> json(%{code: 4, error: "Unauthorized", message: "Account verification token is invalid"})
   end
 
+  def call(conn, {:error, :bad_request, message}) do
+    conn
+    |> put_status(:bad_request)
+    |> json(%{code: 99, error: "Bad Request", message: message})
+  end
+
 end
