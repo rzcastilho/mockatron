@@ -1,4 +1,4 @@
-# Mockatron [![Build Status](https://travis-ci.org/rzcastilho/mockatron.svg?branch=master "Build Status")](http://travis-ci.org/rzcastilho/mockatron) [![Coverage Status](https://coveralls.io/repos/github/rzcastilho/mockatron/badge.svg)](https://coveralls.io/github/rzcastilho/mockatron)
+# Mockatron [![Build Status](https://travis-ci.org/rzcastilho/mockatron.svg?branch=master "Build Status")](http://travis-ci.org/rzcastilho/mockatron) [![Coverage Status](https://coveralls.io/repos/github/rzcastilho/mockatron/badge.svg?branch=master)](https://coveralls.io/github/rzcastilho/mockatron)
 
 ![Mockatron Logo](docs/images/mockatron-logo.png "Mockatron Logo")
 
