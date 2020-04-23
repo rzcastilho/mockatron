@@ -34,6 +34,7 @@ defmodule MockatronWeb.Router do
     post "/sign_up", UserController, :create
     post "/sign_in", UserController, :sign_in
     get "/verify", UserController, :verify_email
+    get "/resend", UserController, :resend_token
   end
 
   scope "/v1/mockatron/ui", MockatronWeb do
