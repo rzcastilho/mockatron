@@ -50,7 +50,7 @@ defmodule Mockatron.MixProject do
       {:bcrypt_elixir, "~> 2.0"},
       {:guardian, "~> 2.0"},
       {:bamboo, "~> 1.3"},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.13", only: :test}
     ]
   end
 
