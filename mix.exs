@@ -49,7 +49,7 @@ defmodule Mockatron.MixProject do
       {:comeonin, "~> 5.1"},
       {:bcrypt_elixir, "~> 2.0"},
       {:guardian, "~> 2.0"},
-      {:bamboo, "~> 1.3"},
+      {:bamboo, "~> 2.0"},
       {:excoveralls, "~> 0.13", only: :test}
     ]
   end
