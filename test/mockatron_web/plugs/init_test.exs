@@ -5,7 +5,12 @@ defmodule MockatronWeb.InitTest do
   alias Mockatron.Guardian.Plug
   alias Mockatron.Auth
 
-  @user_valid_attrs %{email: "test@mockatron.io", password: "Welcome1", password_confirmation: "Welcome1", verified: true}
+  @user_valid_attrs %{
+    email: "test@mockatron.io",
+    password: "Welcome1",
+    password_confirmation: "Welcome1",
+    verified: true
+  }
 
   setup do
     {:ok, user} = Auth.create_user(@user_valid_attrs)
@@ -14,9 +19,10 @@ defmodule MockatronWeb.InitTest do
   end
 
   test "Init plug with mockatron structure", %{conn: conn} do
-    conn = conn
-    |> Init.call(%{})
+    conn =
+      conn
+      |> Init.call(%{})
+
     assert conn.assigns[:mockatron]
   end
-
 end

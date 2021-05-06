@@ -11,15 +11,28 @@ defmodule MockatronWeb.Utils.Helper do
   @not_found_text "code: 404\nmessage: Not Found\ndescription: No agent found to meet this request"
 
   def agent_stringify(%Signature{} = signature) do
-    case { signature.content_type, signature.operation } do
-      { :none, :none }  ->
-        "[User ID: #{signature.user_id}] #{signature.method} #{signature.protocol}://#{signature.host}:#{signature.port}#{signature.path}"
-      { _, :none } ->
-        "[User ID: #{signature.user_id}] #{signature.method} #{signature.protocol}://#{signature.host}:#{signature.port}#{signature.path} [Content Type: #{signature.content_type}]"
-      { :none, _ } ->
-        "[User ID: #{signature.user_id}] #{signature.method} #{signature.protocol}://#{signature.host}:#{signature.port}#{signature.path} [Operation: #{signature.operation}]"
+    case {signature.content_type, signature.operation} do
+      {:none, :none} ->
+        "[User ID: #{signature.user_id}] #{signature.method} #{signature.protocol}://#{
+          signature.host
+        }:#{signature.port}#{signature.path}"
+
+      {_, :none} ->
+        "[User ID: #{signature.user_id}] #{signature.method} #{signature.protocol}://#{
+          signature.host
+        }:#{signature.port}#{signature.path} [Content Type: #{signature.content_type}]"
+
+      {:none, _} ->
+        "[User ID: #{signature.user_id}] #{signature.method} #{signature.protocol}://#{
+          signature.host
+        }:#{signature.port}#{signature.path} [Operation: #{signature.operation}]"
+
       _ ->
-        "[User ID: #{signature.user_id}] #{signature.method} #{signature.protocol}://#{signature.host}:#{signature.port}#{signature.path} [Content Type: #{signature.content_type}] [Operation: #{signature.operation}]"
+        "[User ID: #{signature.user_id}] #{signature.method} #{signature.protocol}://#{
+          signature.host
+        }:#{signature.port}#{signature.path} [Content Type: #{signature.content_type}] [Operation: #{
+          signature.operation
+        }]"
     end
   end
 
@@ -35,18 +48,23 @@ defmodule MockatronWeb.Utils.Helper do
     :crypto.hash(:md5, agent_stringify(signature, filter)) |> Base.encode16(case: :lower)
   end
 
-  def assert(source, operator, target)  do
+  def assert(source, operator, target) do
     case operator do
       "EQUALS" ->
         source == target
+
       "NOTEQUALS" ->
         source != target
+
       "CONTAINS" ->
         String.contains?(source, target)
+
       "STARTSWITH" ->
         String.starts_with?(source, target)
+
       "ENDSWITH" ->
         String.ends_with?(source, target)
+
       "REGEX" ->
         Regex.match?(Regex.compile!(target), source)
     end
@@ -58,17 +76,22 @@ defmodule MockatronWeb.Utils.Helper do
 
   def load_agent(%Signature{} = signature, repo) do
     signature
-    |> Map.to_list
+    |> Map.to_list()
     |> Enum.filter(&filter_signature_params/1)
     |> load_agent(repo)
-    |> repo.preload([responses: from(r in Response, where: r.enable == true)])
-    |> repo.preload([filters: {from(f in Filter, where: f.enable == true, order_by: f.priority), [:request_conditions, :response_conditions]}])
+    |> repo.preload(responses: from(r in Response, where: r.enable == true))
+    |> repo.preload(
+      filters:
+        {from(f in Filter, where: f.enable == true, order_by: f.priority),
+         [:request_conditions, :response_conditions]}
+    )
   end
 
   def load_agent(filters, repo) when is_list(filters) do
     case repo.one(from a in Agent, select: a, where: ^filters) do
       %Agent{} = agent ->
         agent
+
       _ ->
         filters
         |> List.keydelete(:path, 0)
@@ -80,17 +103,22 @@ defmodule MockatronWeb.Utils.Helper do
     path
     |> String.split("/")
     |> Enum.filter(&(&1 != ""))
-    |> Enum.reverse
+    |> Enum.reverse()
     |> load_agent(path, filters, repo)
   end
 
-  def load_agent([_|rest], original_path, filters, repo) do
-    conditions = build_dynamic_conditions(filters, "/#{rest |> Enum.reverse |> Enum.join("/")}%")
+  def load_agent([_ | rest], original_path, filters, repo) do
+    conditions =
+      build_dynamic_conditions(filters, "/#{rest |> Enum.reverse() |> Enum.join("/")}%")
+
     case repo.all(from a in Agent, select: a, where: ^conditions) do
       nil ->
         load_agent(rest, original_path, filters, repo)
+
       agents ->
-        Enum.reduce_while(agents, nil, fn agent, _acc -> reduce_agents_by_regex(original_path, agent) end)
+        Enum.reduce_while(agents, nil, fn agent, _acc ->
+          reduce_agents_by_regex(original_path, agent)
+        end)
     end
   end
 
@@ -107,64 +135,95 @@ defmodule MockatronWeb.Utils.Helper do
 
   def build_dynamic_conditions(filters, path) do
     conditions = dynamic([a], like(a.path, ^path) and not is_nil(a.path_regex))
-    conditions = case List.keyfind(filters, :user_id, 0) do
-      {:user_id, user_id} -> dynamic([a], a.user_id == ^user_id and ^conditions)
-      _ -> conditions
-    end
-    conditions = case List.keyfind(filters, :method, 0) do
-      {:method, method} -> dynamic([a], a.method == ^method and ^conditions)
-      _ -> conditions
-    end
-    conditions = case List.keyfind(filters, :protocol, 0) do
-      {:protocol, protocol} -> dynamic([a], a.protocol == ^protocol and ^conditions)
-      _ -> conditions
-    end
-    conditions = case List.keyfind(filters, :host, 0) do
-      {:host, host} -> dynamic([a], a.host == ^host and ^conditions)
-      _ -> conditions
-    end
-    conditions = case List.keyfind(filters, :port, 0) do
-      {:port, port} -> dynamic([a], a.port == ^port and ^conditions)
-      _ -> conditions
-    end
-    conditions = case List.keyfind(filters, :operation, 0) do
-      {:operation, operation} -> dynamic([a], a.operation == ^operation and ^conditions)
-      _ -> conditions
-    end
-    conditions = case List.keyfind(filters, :content_type, 0) do
-      {:content_type, content_type} -> dynamic([a], a.content_type == ^content_type and ^conditions)
-      _ -> conditions
-    end
+
+    conditions =
+      case List.keyfind(filters, :user_id, 0) do
+        {:user_id, user_id} -> dynamic([a], a.user_id == ^user_id and ^conditions)
+        _ -> conditions
+      end
+
+    conditions =
+      case List.keyfind(filters, :method, 0) do
+        {:method, method} -> dynamic([a], a.method == ^method and ^conditions)
+        _ -> conditions
+      end
+
+    conditions =
+      case List.keyfind(filters, :protocol, 0) do
+        {:protocol, protocol} -> dynamic([a], a.protocol == ^protocol and ^conditions)
+        _ -> conditions
+      end
+
+    conditions =
+      case List.keyfind(filters, :host, 0) do
+        {:host, host} -> dynamic([a], a.host == ^host and ^conditions)
+        _ -> conditions
+      end
+
+    conditions =
+      case List.keyfind(filters, :port, 0) do
+        {:port, port} -> dynamic([a], a.port == ^port and ^conditions)
+        _ -> conditions
+      end
+
+    conditions =
+      case List.keyfind(filters, :operation, 0) do
+        {:operation, operation} -> dynamic([a], a.operation == ^operation and ^conditions)
+        _ -> conditions
+      end
+
+    conditions =
+      case List.keyfind(filters, :content_type, 0) do
+        {:content_type, content_type} ->
+          dynamic([a], a.content_type == ^content_type and ^conditions)
+
+        _ ->
+          conditions
+      end
+
     conditions
   end
 
   def filter_responses(%Agent{} = agent, %Filter{} = filter) do
-    filtered_responses = Enum.filter(agent.responses, fn response -> assert_response_conditions(response, filter.response_conditions) end)
+    filtered_responses =
+      Enum.filter(agent.responses, fn response ->
+        assert_response_conditions(response, filter.response_conditions)
+      end)
+
     Map.put(agent, :responses, filtered_responses)
   end
 
-  def assert_response_conditions(%{label: label} = response, [%{field_type: "LABEL", operator: operator, value: value}|conditions]) do
+  def assert_response_conditions(%{label: label} = response, [
+        %{field_type: "LABEL", operator: operator, value: value} | conditions
+      ]) do
     case assert(label, operator, value) do
       true ->
         assert_response_conditions(response, conditions)
+
       _ ->
         false
     end
   end
 
-  def assert_response_conditions(%{http_code: http_code} = response, [%{field_type: "HTTP_CODE", operator: operator, value: value}|conditions]) do
+  def assert_response_conditions(%{http_code: http_code} = response, [
+        %{field_type: "HTTP_CODE", operator: operator, value: value} | conditions
+      ]) do
     case assert(Integer.to_string(http_code), operator, value) do
       true ->
         assert_response_conditions(response, conditions)
+
       _ ->
         false
     end
   end
 
-  def assert_response_conditions(%{body: body} = response, [%{field_type: "BODY", operator: operator, value: value}|conditions]) do
+  def assert_response_conditions(%{body: body} = response, [
+        %{field_type: "BODY", operator: operator, value: value} | conditions
+      ]) do
     case assert(body, operator, value) do
       true ->
         assert_response_conditions(response, conditions)
+
       _ ->
         false
     end
@@ -174,32 +233,47 @@ defmodule MockatronWeb.Utils.Helper do
     true
   end
 
-  def send_agent_not_found_resp(%Plug.Conn{assigns: %{mockatron: %{signature: %{content_type: "application/json" = content_type}}}} = conn) do
+  def send_agent_not_found_resp(
+        %Plug.Conn{
+          assigns: %{mockatron: %{signature: %{content_type: "application/json" = content_type}}}
+        } = conn
+      ) do
     conn
     |> put_resp_content_type(content_type)
     |> put_status(:not_found)
     |> send_resp(404, @not_found_json)
   end
 
-  def send_agent_not_found_resp(%Plug.Conn{assigns: %{mockatron: %{signature: %{content_type: "text/xml" = content_type}}}} = conn) do
+  def send_agent_not_found_resp(
+        %Plug.Conn{
+          assigns: %{mockatron: %{signature: %{content_type: "text/xml" = content_type}}}
+        } = conn
+      ) do
     conn
     |> put_resp_content_type(content_type)
     |> put_status(:not_found)
     |> send_resp(404, @not_found_xml)
   end
 
-  def send_agent_not_found_resp(%Plug.Conn{assigns: %{mockatron: %{signature: %{content_type: "application/soap+xml" = content_type}}}} = conn) do
+  def send_agent_not_found_resp(
+        %Plug.Conn{
+          assigns: %{
+            mockatron: %{signature: %{content_type: "application/soap+xml" = content_type}}
+          }
+        } = conn
+      ) do
     conn
     |> put_resp_content_type(content_type)
     |> put_status(:not_found)
     |> send_resp(404, @not_found_xml)
   end
 
-  def send_agent_not_found_resp(%Plug.Conn{assigns: %{mockatron: %{signature: %{content_type: _content_type}}}} = conn) do
+  def send_agent_not_found_resp(
+        %Plug.Conn{assigns: %{mockatron: %{signature: %{content_type: _content_type}}}} = conn
+      ) do
     conn
     |> put_resp_content_type("text/plain")
     |> put_status(:not_found)
     |> send_resp(404, @not_found_text)
   end
-
 end

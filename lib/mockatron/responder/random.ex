@@ -2,7 +2,7 @@ defmodule Mockatron.Responder.Random do
   use GenServer
 
   defmodule State do
-    defstruct [agent: nil, size: nil, index: 0, count: 0]
+    defstruct agent: nil, size: nil, index: 0, count: 0
   end
 
   def start_link(%Mockatron.Core.Agent{} = agent) do
@@ -22,12 +22,11 @@ defmodule Mockatron.Responder.Random do
   end
 
   def handle_call(:state, _from, state) do
-    { :reply, state, state }
+    {:reply, state, state}
   end
 
   def handle_call(:response, _from, %State{agent: agent, size: size, count: count} = state) do
-    index = Enum.random(0..size-1)
-    { :reply, Enum.at(agent.responses, index), %State{state|index: index, count: count+1 } }
+    index = Enum.random(0..(size - 1))
+    {:reply, Enum.at(agent.responses, index), %State{state | index: index, count: count + 1}}
   end
-
 end

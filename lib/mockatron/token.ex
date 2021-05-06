@@ -8,8 +8,11 @@ defmodule Mockatron.Token do
   end
 
   def verify_new_account_token(token) do
-    max_age = 86_400 # a day
-    Phoenix.Token.verify(MockatronWeb.Endpoint, @account_verification_salt, token, max_age: max_age)
-  end
+    # a day
+    max_age = 86_400
 
+    Phoenix.Token.verify(MockatronWeb.Endpoint, @account_verification_salt, token,
+      max_age: max_age
+    )
+  end
 end

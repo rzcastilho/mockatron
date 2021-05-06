@@ -6,14 +6,17 @@ defmodule Mockatron.Application do
   use Application
 
   def start(_type, _args) do
-    # List all child processes to be supervised
     children = [
       # Start the Ecto repository
       Mockatron.Repo,
-      # Start the endpoint when the application starts
+      # Start the Telemetry supervisor
+      MockatronWeb.Telemetry,
+      # Start the PubSub system
+      {Phoenix.PubSub, name: Mockatron.PubSub},
+      # Start the Endpoint (http/https)
       MockatronWeb.Endpoint,
-      # Starts a worker by calling: Mockatron.Worker.start_link(arg)
-      # {Mockatron.Worker, arg},
+      # Start a worker by calling: Mockatron.Worker.start_link(arg)
+      # {Mockatron.Worker, arg}
       %{
         id: :agent,
         start: {Cachex, :start_link, [:agent, []]}

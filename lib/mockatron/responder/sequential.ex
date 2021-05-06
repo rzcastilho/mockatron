@@ -2,7 +2,7 @@ defmodule Mockatron.Responder.Sequential do
   use GenServer
 
   defmodule State do
-    defstruct [agent: nil, size: nil, index: 0, count: 0]
+    defstruct agent: nil, size: nil, index: 0, count: 0
   end
 
   def start_link(%Mockatron.Core.Agent{} = agent) do
@@ -22,17 +22,23 @@ defmodule Mockatron.Responder.Sequential do
   end
 
   def handle_call(:state, _from, state) do
-    { :reply, state, state }
+    {:reply, state, state}
   end
 
-  def handle_call(:response, _from, %State{agent: agent, size: size, index: index, count: count} = state) do
-    index = case index do
-      ^size ->
-        0
-      _ ->
-        index
-    end
-    { :reply, Enum.at(agent.responses, index), %State{state|index: index+1, count: count+1 } }
-  end
+  def handle_call(
+        :response,
+        _from,
+        %State{agent: agent, size: size, index: index, count: count} = state
+      ) do
+    index =
+      case index do
+        ^size ->
+          0
 
+        _ ->
+          index
+      end
+
+    {:reply, Enum.at(agent.responses, index), %State{state | index: index + 1, count: count + 1}}
+  end
 end

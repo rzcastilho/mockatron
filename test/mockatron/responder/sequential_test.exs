@@ -61,18 +61,22 @@ defmodule Mockatron.Responder.SequentialTest do
   end
 
   test "get sequential responses", %{server: pid} do
-    current_sequential_responses = 1..6
-    |> Enum.map(
-         fn _ ->
-           %{body: body} = Mockatron.Responder.Sequential.response(pid, nil);
-           Jason.decode!(body);
-         end)
+    current_sequential_responses =
+      1..6
+      |> Enum.map(fn _ ->
+        %{body: body} = Mockatron.Responder.Sequential.response(pid, nil)
+        Jason.decode!(body)
+      end)
+
     assert @sequential_responses == current_sequential_responses
   end
 
   test "get sequential state", %{server: pid} do
-    assert %Mockatron.Responder.Sequential.State{agent: agent, size: size, index: index, count: count} =
-             Mockatron.Responder.Sequential.state(pid)
+    assert %Mockatron.Responder.Sequential.State{
+             agent: _agent,
+             size: _size,
+             index: _index,
+             count: _count
+           } = Mockatron.Responder.Sequential.state(pid)
   end
-
 end

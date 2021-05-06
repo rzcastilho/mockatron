@@ -19,8 +19,8 @@ defmodule Mix.Tasks.Mockatron.Seed do
   """
 
   def run(_) do
-    Mix.Task.run "app.start", []
-    seed(Mix.env)
+    Mix.Task.run("app.start", [])
+    seed(Mix.env())
   end
 
   def seed(:test) do
@@ -29,121 +29,516 @@ defmodule Mix.Tasks.Mockatron.Seed do
   end
 
   def seed(:dev) do
-    user_id = case Repo.get_by(User, email: "test@mockatron.io") do
-      nil ->
-        %{id: user_id} = Repo.insert!(%User{email: "test@mockatron.io", password_hash: hash_pwd_salt("Welcome1")})
-        user_id
-      %{id: user_id} ->
-        user_id
-    end
+    user_id =
+      case Repo.get_by(User, email: "test@mockatron.io") do
+        nil ->
+          %{id: user_id} =
+            Repo.insert!(%User{
+              email: "test@mockatron.io",
+              password_hash: hash_pwd_salt("Welcome1"),
+              verified: true
+            })
+
+          user_id
+
+        %{id: user_id} ->
+          user_id
+      end
 
     case Repo.get_by(Agent, path: "/sequential") do
       nil ->
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "GET", protocol: "http", host: "localhost", port: 8000, path: "/sequential", content_type: "application/json", responder: "SEQUENTIAL"})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: "{\"code\":\"0\",\"description\":\"Success\"}", enable: true})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Error", http_code: 400, body: "{\"code\":\"99\",\"description\":\"Error\"}", enable: true})
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "GET",
+            protocol: "http",
+            host: "localhost",
+            port: 8000,
+            path: "/sequential",
+            content_type: "application/json",
+            responder: "SEQUENTIAL"
+          })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Success",
+          http_code: 200,
+          body: "{\"code\":\"0\",\"description\":\"Success\"}",
+          enable: true
+        })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Error",
+          http_code: 400,
+          body: "{\"code\":\"99\",\"description\":\"Error\"}",
+          enable: true
+        })
+
       _ ->
         :exists
     end
 
     case Repo.get_by(Agent, path: "/random") do
       nil ->
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "GET", protocol: "http", host: "localhost", port: 8000, path: "/random", content_type: "application/json", responder: "RANDOM"})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: "{\"code\":\"0\",\"description\":\"Success\"}", enable: true})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Error", http_code: 400, body: "{\"code\":\"99\",\"description\":\"Error\"}", enable: true})
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "GET",
+            protocol: "http",
+            host: "localhost",
+            port: 8000,
+            path: "/random",
+            content_type: "application/json",
+            responder: "RANDOM"
+          })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Success",
+          http_code: 200,
+          body: "{\"code\":\"0\",\"description\":\"Success\"}",
+          enable: true
+        })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Error",
+          http_code: 400,
+          body: "{\"code\":\"99\",\"description\":\"Error\"}",
+          enable: true
+        })
+
       _ ->
         :exists
     end
 
     case Repo.get_by(Agent, path: "/filter/sequential") do
       nil ->
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "GET", protocol: "http", host: "localhost", port: 8000, path: "/filter/sequential", content_type: "application/json", responder: "SEQUENTIAL"})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: "{\"code\":\"0\",\"description\":\"Success\"}", enable: true})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: "{\"code\":\"0\",\"description\":\"Success Again\"}", enable: true})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Error", http_code: 400, body: "{\"code\":\"99\",\"description\":\"Error\"}", enable: true})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Error", http_code: 500, body: "{\"code\":\"99\",\"description\":\"Error Again\"}", enable: true})
-        %{id: filter_id} = Repo.insert!(%Filter{agent_id: agent_id, label: "Success", priority: 0})
-        Repo.insert!(%RequestCondition{filter_id: filter_id, field_type: "QUERY_PARAM", param_name: "status", operator: "EQUALS", value: "success"})
-        Repo.insert!(%ResponseCondition{filter_id: filter_id, field_type: "LABEL", operator: "EQUALS", value: "Success"})
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "GET",
+            protocol: "http",
+            host: "localhost",
+            port: 8000,
+            path: "/filter/sequential",
+            content_type: "application/json",
+            responder: "SEQUENTIAL"
+          })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Success",
+          http_code: 200,
+          body: "{\"code\":\"0\",\"description\":\"Success\"}",
+          enable: true
+        })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Success",
+          http_code: 200,
+          body: "{\"code\":\"0\",\"description\":\"Success Again\"}",
+          enable: true
+        })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Error",
+          http_code: 400,
+          body: "{\"code\":\"99\",\"description\":\"Error\"}",
+          enable: true
+        })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Error",
+          http_code: 500,
+          body: "{\"code\":\"99\",\"description\":\"Error Again\"}",
+          enable: true
+        })
+
+        %{id: filter_id} =
+          Repo.insert!(%Filter{agent_id: agent_id, label: "Success", priority: 0})
+
+        Repo.insert!(%RequestCondition{
+          filter_id: filter_id,
+          field_type: "QUERY_PARAM",
+          param_name: "status",
+          operator: "EQUALS",
+          value: "success"
+        })
+
+        Repo.insert!(%ResponseCondition{
+          filter_id: filter_id,
+          field_type: "LABEL",
+          operator: "EQUALS",
+          value: "Success"
+        })
+
         %{id: filter_id} = Repo.insert!(%Filter{agent_id: agent_id, label: "Error", priority: 1})
-        Repo.insert!(%RequestCondition{filter_id: filter_id, field_type: "QUERY_PARAM", param_name: "status", operator: "EQUALS", value: "error"})
-        Repo.insert!(%ResponseCondition{filter_id: filter_id, field_type: "LABEL", operator: "EQUALS", value: "Error"})
+
+        Repo.insert!(%RequestCondition{
+          filter_id: filter_id,
+          field_type: "QUERY_PARAM",
+          param_name: "status",
+          operator: "EQUALS",
+          value: "error"
+        })
+
+        Repo.insert!(%ResponseCondition{
+          filter_id: filter_id,
+          field_type: "LABEL",
+          operator: "EQUALS",
+          value: "Error"
+        })
+
       _ ->
         :exists
     end
 
     case Repo.get_by(Agent, path: "/filter/random") do
       nil ->
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "GET", protocol: "http", host: "localhost", port: 8000, path: "/filter/random", content_type: "application/json", responder: "RANDOM"})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: "{\"code\":\"0\",\"description\":\"Success\"}", enable: true})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Error", http_code: 400, body: "{\"code\":\"99\",\"description\":\"Error\"}", enable: true})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: "{\"code\":\"0\",\"description\":\"Success Again\"}", enable: true})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Error", http_code: 500, body: "{\"code\":\"99\",\"description\":\"Error Again\"}", enable: true})
-        %{id: filter_id} = Repo.insert!(%Filter{agent_id: agent_id, label: "Success", priority: 0})
-        Repo.insert!(%RequestCondition{filter_id: filter_id, field_type: "QUERY_PARAM", param_name: "status", operator: "EQUALS", value: "success"})
-        Repo.insert!(%ResponseCondition{filter_id: filter_id, field_type: "LABEL", operator: "EQUALS", value: "Success"})
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "GET",
+            protocol: "http",
+            host: "localhost",
+            port: 8000,
+            path: "/filter/random",
+            content_type: "application/json",
+            responder: "RANDOM"
+          })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Success",
+          http_code: 200,
+          body: "{\"code\":\"0\",\"description\":\"Success\"}",
+          enable: true
+        })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Error",
+          http_code: 400,
+          body: "{\"code\":\"99\",\"description\":\"Error\"}",
+          enable: true
+        })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Success",
+          http_code: 200,
+          body: "{\"code\":\"0\",\"description\":\"Success Again\"}",
+          enable: true
+        })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Error",
+          http_code: 500,
+          body: "{\"code\":\"99\",\"description\":\"Error Again\"}",
+          enable: true
+        })
+
+        %{id: filter_id} =
+          Repo.insert!(%Filter{agent_id: agent_id, label: "Success", priority: 0})
+
+        Repo.insert!(%RequestCondition{
+          filter_id: filter_id,
+          field_type: "QUERY_PARAM",
+          param_name: "status",
+          operator: "EQUALS",
+          value: "success"
+        })
+
+        Repo.insert!(%ResponseCondition{
+          filter_id: filter_id,
+          field_type: "LABEL",
+          operator: "EQUALS",
+          value: "Success"
+        })
+
         %{id: filter_id} = Repo.insert!(%Filter{agent_id: agent_id, label: "Error", priority: 1})
-        Repo.insert!(%RequestCondition{filter_id: filter_id, field_type: "QUERY_PARAM", param_name: "status", operator: "EQUALS", value: "error"})
-        Repo.insert!(%ResponseCondition{filter_id: filter_id, field_type: "LABEL", operator: "EQUALS", value: "Error"})
+
+        Repo.insert!(%RequestCondition{
+          filter_id: filter_id,
+          field_type: "QUERY_PARAM",
+          param_name: "status",
+          operator: "EQUALS",
+          value: "error"
+        })
+
+        Repo.insert!(%ResponseCondition{
+          filter_id: filter_id,
+          field_type: "LABEL",
+          operator: "EQUALS",
+          value: "Error"
+        })
+
       _ ->
         :exists
     end
 
-    case Repo.one(from a in Agent, select: a, where: "/calculator.asmx" == a.path and "text/xml" == a.content_type and "\"http://tempuri.org/Add\"" == a.operation) do
+    case Repo.one(
+           from a in Agent,
+             select: a,
+             where:
+               "/calculator.asmx" == a.path and "text/xml" == a.content_type and
+                 "\"http://tempuri.org/Add\"" == a.operation
+         ) do
       nil ->
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "POST", protocol: "http", host: "www.dneonline.com", port: 80, path: "/calculator.asmx", content_type: "text/xml", responder: "SEQUENTIAL", operation: "\"http://tempuri.org/Add\""})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n   <soap:Body>\n      <AddResponse xmlns=\"http://tempuri.org/\">\n         <AddResult>20</AddResult>\n      </AddResponse>\n   </soap:Body>\n</soap:Envelope>", enable: true})
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "POST",
+            protocol: "http",
+            host: "www.dneonline.com",
+            port: 80,
+            path: "/calculator.asmx",
+            content_type: "text/xml",
+            responder: "SEQUENTIAL",
+            operation: "\"http://tempuri.org/Add\""
+          })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Success",
+          http_code: 200,
+          body:
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n   <soap:Body>\n      <AddResponse xmlns=\"http://tempuri.org/\">\n         <AddResult>20</AddResult>\n      </AddResponse>\n   </soap:Body>\n</soap:Envelope>",
+          enable: true
+        })
+
       _ ->
         :exists
     end
 
-    case Repo.one(from a in Agent, select: a, where: "/calculator.asmx" == a.path and "text/xml" == a.content_type and "\"http://tempuri.org/Divide\"" == a.operation) do
+    case Repo.one(
+           from a in Agent,
+             select: a,
+             where:
+               "/calculator.asmx" == a.path and "text/xml" == a.content_type and
+                 "\"http://tempuri.org/Divide\"" == a.operation
+         ) do
       nil ->
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "POST", protocol: "http", host: "www.dneonline.com", port: 80, path: "/calculator.asmx", content_type: "text/xml", responder: "SEQUENTIAL", operation: "\"http://tempuri.org/Divide\""})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n   <soap:Body>\n      <DivideResponse xmlns=\"http://tempuri.org/\">\n         <DivideResult>5</DivideResult>\n      </DivideResponse>\n   </soap:Body>\n</soap:Envelope>", enable: true})
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "POST",
+            protocol: "http",
+            host: "www.dneonline.com",
+            port: 80,
+            path: "/calculator.asmx",
+            content_type: "text/xml",
+            responder: "SEQUENTIAL",
+            operation: "\"http://tempuri.org/Divide\""
+          })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Success",
+          http_code: 200,
+          body:
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n   <soap:Body>\n      <DivideResponse xmlns=\"http://tempuri.org/\">\n         <DivideResult>5</DivideResult>\n      </DivideResponse>\n   </soap:Body>\n</soap:Envelope>",
+          enable: true
+        })
+
       _ ->
         :exists
     end
 
-    case Repo.one(from a in Agent, select: a, where: "/calculator.asmx" == a.path and "text/xml" == a.content_type and "\"http://tempuri.org/Multiply\"" == a.operation) do
+    case Repo.one(
+           from a in Agent,
+             select: a,
+             where:
+               "/calculator.asmx" == a.path and "text/xml" == a.content_type and
+                 "\"http://tempuri.org/Multiply\"" == a.operation
+         ) do
       nil ->
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "POST", protocol: "http", host: "www.dneonline.com", port: 80, path: "/calculator.asmx", content_type: "text/xml", responder: "SEQUENTIAL", operation: "\"http://tempuri.org/Multiply\""})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n   <soap:Body>\n      <MultiplyResponse xmlns=\"http://tempuri.org/\">\n         <MultiplyResult>16</MultiplyResult>\n      </MultiplyResponse>\n   </soap:Body>\n</soap:Envelope>", enable: true})
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "POST",
+            protocol: "http",
+            host: "www.dneonline.com",
+            port: 80,
+            path: "/calculator.asmx",
+            content_type: "text/xml",
+            responder: "SEQUENTIAL",
+            operation: "\"http://tempuri.org/Multiply\""
+          })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Success",
+          http_code: 200,
+          body:
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n   <soap:Body>\n      <MultiplyResponse xmlns=\"http://tempuri.org/\">\n         <MultiplyResult>16</MultiplyResult>\n      </MultiplyResponse>\n   </soap:Body>\n</soap:Envelope>",
+          enable: true
+        })
+
       _ ->
         :exists
     end
 
-    case Repo.one(from a in Agent, select: a, where: "/calculator.asmx" == a.path and "text/xml" == a.content_type and "\"http://tempuri.org/Subtract\"" == a.operation) do
+    case Repo.one(
+           from a in Agent,
+             select: a,
+             where:
+               "/calculator.asmx" == a.path and "text/xml" == a.content_type and
+                 "\"http://tempuri.org/Subtract\"" == a.operation
+         ) do
       nil ->
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "POST", protocol: "http", host: "www.dneonline.com", port: 80, path: "/calculator.asmx", content_type: "text/xml", responder: "SEQUENTIAL", operation: "\"http://tempuri.org/Subtract\""})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n   <soap:Body>\n      <SubtractResponse xmlns=\"http://tempuri.org/\">\n         <SubtractResult>10</SubtractResult>\n      </SubtractResponse>\n   </soap:Body>\n</soap:Envelope>", enable: true})
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "POST",
+            protocol: "http",
+            host: "www.dneonline.com",
+            port: 80,
+            path: "/calculator.asmx",
+            content_type: "text/xml",
+            responder: "SEQUENTIAL",
+            operation: "\"http://tempuri.org/Subtract\""
+          })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Success",
+          http_code: 200,
+          body:
+            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n   <soap:Body>\n      <SubtractResponse xmlns=\"http://tempuri.org/\">\n         <SubtractResult>10</SubtractResult>\n      </SubtractResponse>\n   </soap:Body>\n</soap:Envelope>",
+          enable: true
+        })
+
       _ ->
         :exists
     end
 
     case Repo.one(from a in Agent, select: a, where: "/v2/beers" == a.path) do
       nil ->
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "GET", protocol: "https", host: "api.punkapi.com", port: 443, path: "/v2/beers", content_type: "application/json", responder: "SEQUENTIAL"})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: @beers, enable: true})
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "POST", protocol: "https", host: "api.punkapi.com", port: 443, path: "/v2/beers", content_type: "application/json", responder: "SEQUENTIAL"})
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "GET",
+            protocol: "https",
+            host: "api.punkapi.com",
+            port: 443,
+            path: "/v2/beers",
+            content_type: "application/json",
+            responder: "SEQUENTIAL"
+          })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Success",
+          http_code: 200,
+          body: @beers,
+          enable: true
+        })
+
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "POST",
+            protocol: "https",
+            host: "api.punkapi.com",
+            port: 443,
+            path: "/v2/beers",
+            content_type: "application/json",
+            responder: "SEQUENTIAL"
+          })
+
         Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 201})
 
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "GET", protocol: "https", host: "api.punkapi.com", port: 443, path: "/v2/beers/<id>", path_regex: "^/v2/beers/(?<id>[^/]+)$", content_type: "application/json", responder: "SEQUENTIAL"})
-        Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 200, body: @beer, enable: true})
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "POST", protocol: "https", host: "api.punkapi.com", port: 443, path: "/v2/beers/<id>", path_regex: "^/v2/beers/(?<id>[^/]+)$", content_type: "application/json", responder: "SEQUENTIAL"})
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "GET",
+            protocol: "https",
+            host: "api.punkapi.com",
+            port: 443,
+            path: "/v2/beers/<id>",
+            path_regex: "^/v2/beers/(?<id>[^/]+)$",
+            content_type: "application/json",
+            responder: "SEQUENTIAL"
+          })
+
+        Repo.insert!(%Response{
+          agent_id: agent_id,
+          label: "Success",
+          http_code: 200,
+          body: @beer,
+          enable: true
+        })
+
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "POST",
+            protocol: "https",
+            host: "api.punkapi.com",
+            port: 443,
+            path: "/v2/beers/<id>",
+            path_regex: "^/v2/beers/(?<id>[^/]+)$",
+            content_type: "application/json",
+            responder: "SEQUENTIAL"
+          })
+
         Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 204})
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "PUT", protocol: "https", host: "api.punkapi.com", port: 443, path: "/v2/beers/<id>", path_regex: "^/v2/beers/(?<id>[^/]+)$", content_type: "application/json", responder: "SEQUENTIAL"})
+
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "PUT",
+            protocol: "https",
+            host: "api.punkapi.com",
+            port: 443,
+            path: "/v2/beers/<id>",
+            path_regex: "^/v2/beers/(?<id>[^/]+)$",
+            content_type: "application/json",
+            responder: "SEQUENTIAL"
+          })
+
         Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 204})
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "PATCH", protocol: "https", host: "api.punkapi.com", port: 443, path: "/v2/beers/<id>", path_regex: "^/v2/beers/(?<id>[^/]+)$", content_type: "application/json", responder: "SEQUENTIAL"})
+
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "PATCH",
+            protocol: "https",
+            host: "api.punkapi.com",
+            port: 443,
+            path: "/v2/beers/<id>",
+            path_regex: "^/v2/beers/(?<id>[^/]+)$",
+            content_type: "application/json",
+            responder: "SEQUENTIAL"
+          })
+
         Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 204})
-        %{id: agent_id} = Repo.insert!(%Agent{user_id: user_id, method: "DELETE", protocol: "https", host: "api.punkapi.com", port: 443, path: "/v2/beers/<id>", path_regex: "^/v2/beers/(?<id>[^/]+)$", content_type: "application/json", responder: "SEQUENTIAL"})
+
+        %{id: agent_id} =
+          Repo.insert!(%Agent{
+            user_id: user_id,
+            method: "DELETE",
+            protocol: "https",
+            host: "api.punkapi.com",
+            port: 443,
+            path: "/v2/beers/<id>",
+            path_regex: "^/v2/beers/(?<id>[^/]+)$",
+            content_type: "application/json",
+            responder: "SEQUENTIAL"
+          })
+
         Repo.insert!(%Response{agent_id: agent_id, label: "Success", http_code: 204})
     end
-
   end
 
   def seed(:prod) do
     # Proceed with caution for production
   end
-
 end

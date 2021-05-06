@@ -6,8 +6,16 @@ defmodule Mockatron.AuthTest do
   describe "users" do
     alias Mockatron.Auth.User
 
-    @valid_attrs %{email: "test@mockatron.io", password: "Welcome1", password_confirmation: "Welcome1"}
-    @update_attrs %{email: "contact@mockatron.io", password: "Welcome1", password_confirmation: "Welcome1"}
+    @valid_attrs %{
+      email: "test@mockatron.io",
+      password: "Welcome1",
+      password_confirmation: "Welcome1"
+    }
+    @update_attrs %{
+      email: "contact@mockatron.io",
+      password: "Welcome1",
+      password_confirmation: "Welcome1"
+    }
     @invalid_attrs %{email: nil, password_hash: nil}
 
     def user_fixture(attrs \\ %{}) do
@@ -17,17 +25,23 @@ defmodule Mockatron.AuthTest do
         |> Auth.create_user()
 
       user
-      |> Map.put(:password, nil)
-      |> Map.put(:password_confirmation, nil)
     end
 
     test "list_users/0 returns all users" do
-      user = user_fixture()
-      assert Auth.list_users() == [user]
+      users =
+        user_fixture()
+        |> Map.put(:password, nil)
+        |> Map.put(:password_confirmation, nil)
+
+      assert Auth.list_users() == [users]
     end
 
     test "get_user!/1 returns the user with given id" do
-      user = user_fixture()
+      user =
+        user_fixture()
+        |> Map.put(:password, nil)
+        |> Map.put(:password_confirmation, nil)
+
       assert Auth.get_user!(user.id) == user
     end
 
@@ -43,14 +57,17 @@ defmodule Mockatron.AuthTest do
 
     test "update_user/2 with valid data updates the user" do
       user = user_fixture()
-      assert {:ok, user} = Auth.update_user(user, @update_attrs)
-      assert %User{} = user
+      assert {:ok, %User{} = user} = Auth.update_user(user, @update_attrs)
       assert user.email == "contact@mockatron.io"
       assert user.verified == false
     end
 
     test "update_user/2 with invalid data returns error changeset" do
-      user = user_fixture()
+      user =
+        user_fixture()
+        |> Map.put(:password, nil)
+        |> Map.put(:password_confirmation, nil)
+
       assert {:error, %Ecto.Changeset{}} = Auth.update_user(user, @invalid_attrs)
       assert user == Auth.get_user!(user.id)
     end
@@ -68,7 +85,7 @@ defmodule Mockatron.AuthTest do
 
     test "get_by_email/1 returns user" do
       user_fixture()
-      assert {:ok, user} = Auth.get_by_email("test@mockatron.io")
+      assert {:ok, _user} = Auth.get_by_email("test@mockatron.io")
     end
 
     test "get_by_email/1 returns email_not_found" do
@@ -88,8 +105,8 @@ defmodule Mockatron.AuthTest do
     test "token_sign_in/2 returns user" do
       user_fixture()
       |> Auth.mark_as_verified()
-      assert {:ok, token, jwt} = Auth.token_sign_in("test@mockatron.io", "Welcome1")
-    end
 
+      assert {:ok, _token, _jwt} = Auth.token_sign_in("test@mockatron.io", "Welcome1")
+    end
   end
 end

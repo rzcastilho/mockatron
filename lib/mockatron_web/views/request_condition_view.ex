@@ -11,10 +11,12 @@ defmodule MockatronWeb.RequestConditionView do
   end
 
   def render("request_condition.json", %{request_condition: request_condition}) do
-    %{id: request_condition.id,
+    %{
+      id: request_condition.id,
       field_type: request_condition.field_type,
-      operator: request_condition.operator,
       param_name: request_condition.param_name,
-      value: request_condition.value}
+      operator: request_condition.operator,
+      value: request_condition.value
+    }
   end
 end
