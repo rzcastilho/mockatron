@@ -3,18 +3,66 @@ defmodule Mockatron.CoreTest do
 
   alias Mockatron.Core
 
-  @user_valid_attrs %{email: "test@mockatron.io", password: "Welcome1", password_confirmation: "Welcome1", verified: true}
-  @agent_valid_attrs %{content_type: "application/json", host: "localhost", method: "GET", path: "/json", port: 4000, protocol: "http", responder: "RANDOM"}
+  @user_valid_attrs %{
+    email: "test@mockatron.io",
+    password: "Welcome1",
+    password_confirmation: "Welcome1",
+    verified: true
+  }
+  @agent_valid_attrs %{
+    content_type: "application/json",
+    host: "localhost",
+    method: "GET",
+    path: "/json",
+    port: 4000,
+    protocol: "http",
+    responder: "RANDOM"
+  }
   @filter_valid_attrs %{enable: true, label: "success", priority: 0}
 
   describe "agents" do
     alias Mockatron.Core.Agent
 
     @valid_attrs @agent_valid_attrs
-    @update_attrs %{content_type: "text/xml", host: "localhost", method: "POST", path: "/xml", port: 8080, protocol: "https", responder: "SEQUENTIAL", operation: "do"}
-    @update_path_param_attrs %{content_type: "application/json", host: "localhost", method: "GET", path: "/json/<id>", port: 4000, protocol: "http", responder: "RANDOM", operation: nil}
-    @update_path_param_custom_regex_attrs %{content_type: "application/json", host: "localhost", method: "GET", path: "/json/<id:[0-9]+>", port: 4000, protocol: "http", responder: "RANDOM", operation: nil}
-    @invalid_attrs %{content_type: nil, host: nil, method: nil, path: nil, port: nil, protocol: nil, responder: nil}
+    @update_attrs %{
+      content_type: "text/xml",
+      host: "localhost",
+      method: "POST",
+      path: "/xml",
+      port: 8080,
+      protocol: "https",
+      responder: "SEQUENTIAL",
+      operation: "do"
+    }
+    @update_path_param_attrs %{
+      content_type: "application/json",
+      host: "localhost",
+      method: "GET",
+      path: "/json/<id>",
+      port: 4000,
+      protocol: "http",
+      responder: "RANDOM",
+      operation: nil
+    }
+    @update_path_param_custom_regex_attrs %{
+      content_type: "application/json",
+      host: "localhost",
+      method: "GET",
+      path: "/json/<id:[0-9]+>",
+      port: 4000,
+      protocol: "http",
+      responder: "RANDOM",
+      operation: nil
+    }
+    @invalid_attrs %{
+      content_type: nil,
+      host: nil,
+      method: nil,
+      path: nil,
+      port: nil,
+      protocol: nil,
+      responder: nil
+    }
 
     setup do
       {:ok, user} = Mockatron.Auth.create_user(@user_valid_attrs)
@@ -72,7 +120,8 @@ defmodule Mockatron.CoreTest do
       assert agent.operation == "do"
     end
 
-    test "update_agent/2 with valid data and path param updates the agent and generates path_regex attr", %{user: user} do
+    test "update_agent/2 with valid data and path param updates the agent and generates path_regex attr",
+         %{user: user} do
       agent = agent_fixture(user)
       assert {:ok, agent} = Core.update_agent(agent, @update_path_param_attrs)
       assert %Agent{} = agent
@@ -87,7 +136,8 @@ defmodule Mockatron.CoreTest do
       assert agent.operation == nil
     end
 
-    test "update_agent/2 with valid data and path param with custom regex updates the agent and generates path_regex attr", %{user: user} do
+    test "update_agent/2 with valid data and path param with custom regex updates the agent and generates path_regex attr",
+         %{user: user} do
       agent = agent_fixture(user)
       assert {:ok, agent} = Core.update_agent(agent, @update_path_param_custom_regex_attrs)
       assert %Agent{} = agent
@@ -123,8 +173,19 @@ defmodule Mockatron.CoreTest do
   describe "responses" do
     alias Mockatron.Core.Response
 
-    @valid_attrs %{body: "{\n  \"code\":0,\n  \"message\":\"Success\"\n}", enable: true, http_code: 200, label: "success"}
-    @update_attrs %{body: "<mockatron>\n  <code>404</code>\n  <message>Not Found</message>\n  <description>No agent found to meet this request</description>\n</mockatron>", enable: false, http_code: 404, label: "error"}
+    @valid_attrs %{
+      body: "{\n  \"code\":0,\n  \"message\":\"Success\"\n}",
+      enable: true,
+      http_code: 200,
+      label: "success"
+    }
+    @update_attrs %{
+      body:
+        "<mockatron>\n  <code>404</code>\n  <message>Not Found</message>\n  <description>No agent found to meet this request</description>\n</mockatron>",
+      enable: false,
+      http_code: 404,
+      label: "error"
+    }
     @invalid_attrs %{body: nil, enable: nil, http_code: nil, label: nil}
 
     setup do
@@ -168,7 +229,10 @@ defmodule Mockatron.CoreTest do
       response = response_fixture(agent)
       assert {:ok, response} = Core.update_response(response, @update_attrs)
       assert %Response{} = response
-      assert response.body == "<mockatron>\n  <code>404</code>\n  <message>Not Found</message>\n  <description>No agent found to meet this request</description>\n</mockatron>"
+
+      assert response.body ==
+               "<mockatron>\n  <code>404</code>\n  <message>Not Found</message>\n  <description>No agent found to meet this request</description>\n</mockatron>"
+
       assert response.enable == false
       assert response.http_code == 404
       assert response.label == "error"
@@ -266,7 +330,12 @@ defmodule Mockatron.CoreTest do
     alias Mockatron.Core.RequestCondition
 
     @valid_attrs %{field_type: "BODY", param_name: nil, operator: "REGEX", value: "OK"}
-    @update_attrs %{field_type: "QUERY_PARAM", param_name: "status", operator: "EQUALS", value: "success"}
+    @update_attrs %{
+      field_type: "QUERY_PARAM",
+      param_name: "status",
+      operator: "EQUALS",
+      value: "success"
+    }
     @invalid_attrs %{field_type: nil, param_name: nil, operator: nil, value: nil}
 
     setup do
@@ -295,8 +364,12 @@ defmodule Mockatron.CoreTest do
       assert Core.get_request_condition!(request_condition.id) == request_condition
     end
 
-    test "create_request_condition/1 with valid data creates a request_condition", %{filter: filter} do
-      assert {:ok, %RequestCondition{} = request_condition} = Core.create_request_condition(@valid_attrs, filter)
+    test "create_request_condition/1 with valid data creates a request_condition", %{
+      filter: filter
+    } do
+      assert {:ok, %RequestCondition{} = request_condition} =
+               Core.create_request_condition(@valid_attrs, filter)
+
       assert request_condition.field_type == "BODY"
       assert request_condition.param_name == nil
       assert request_condition.operator == "REGEX"
@@ -307,9 +380,14 @@ defmodule Mockatron.CoreTest do
       assert {:error, %Ecto.Changeset{}} = Core.create_request_condition(@invalid_attrs, filter)
     end
 
-    test "update_request_condition/2 with valid data updates the request_condition", %{filter: filter} do
+    test "update_request_condition/2 with valid data updates the request_condition", %{
+      filter: filter
+    } do
       request_condition = request_condition_fixture(filter)
-      assert {:ok, request_condition} = Core.update_request_condition(request_condition, @update_attrs)
+
+      assert {:ok, request_condition} =
+               Core.update_request_condition(request_condition, @update_attrs)
+
       assert %RequestCondition{} = request_condition
       assert request_condition.field_type == "QUERY_PARAM"
       assert request_condition.param_name == "status"
@@ -319,14 +397,20 @@ defmodule Mockatron.CoreTest do
 
     test "update_request_condition/2 with invalid data returns error changeset", %{filter: filter} do
       request_condition = request_condition_fixture(filter)
-      assert {:error, %Ecto.Changeset{}} = Core.update_request_condition(request_condition, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Core.update_request_condition(request_condition, @invalid_attrs)
+
       assert request_condition == Core.get_request_condition!(request_condition.id)
     end
 
     test "delete_request_condition/1 deletes the request_condition", %{filter: filter} do
       request_condition = request_condition_fixture(filter)
       assert {:ok, %RequestCondition{}} = Core.delete_request_condition(request_condition)
-      assert_raise Ecto.NoResultsError, fn -> Core.get_request_condition!(request_condition.id) end
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Core.get_request_condition!(request_condition.id)
+      end
     end
 
     test "change_request_condition/1 returns a request_condition changeset", %{filter: filter} do
@@ -363,41 +447,62 @@ defmodule Mockatron.CoreTest do
       assert Core.list_response_conditions() == [response_condition]
     end
 
-    test "get_response_condition!/1 returns the response_condition with given id", %{filter: filter} do
+    test "get_response_condition!/1 returns the response_condition with given id", %{
+      filter: filter
+    } do
       response_condition = response_condition_fixture(filter)
       assert Core.get_response_condition!(response_condition.id) == response_condition
     end
 
-    test "create_response_condition/1 with valid data creates a response_condition", %{filter: filter} do
-      assert {:ok, %ResponseCondition{} = response_condition} = Core.create_response_condition(@valid_attrs, filter)
+    test "create_response_condition/1 with valid data creates a response_condition", %{
+      filter: filter
+    } do
+      assert {:ok, %ResponseCondition{} = response_condition} =
+               Core.create_response_condition(@valid_attrs, filter)
+
       assert response_condition.field_type == "LABEL"
       assert response_condition.operator == "STARTSWITH"
       assert response_condition.value == "Success"
     end
 
-    test "create_response_condition/1 with invalid data returns error changeset", %{filter: filter} do
+    test "create_response_condition/1 with invalid data returns error changeset", %{
+      filter: filter
+    } do
       assert {:error, %Ecto.Changeset{}} = Core.create_response_condition(@invalid_attrs, filter)
     end
 
-    test "update_response_condition/2 with valid data updates the response_condition", %{filter: filter} do
+    test "update_response_condition/2 with valid data updates the response_condition", %{
+      filter: filter
+    } do
       response_condition = response_condition_fixture(filter)
-      assert {:ok, response_condition} = Core.update_response_condition(response_condition, @update_attrs)
+
+      assert {:ok, response_condition} =
+               Core.update_response_condition(response_condition, @update_attrs)
+
       assert %ResponseCondition{} = response_condition
       assert response_condition.field_type == "HTTP_CODE"
       assert response_condition.operator == "EQUALS"
       assert response_condition.value == "200"
     end
 
-    test "update_response_condition/2 with invalid data returns error changeset", %{filter: filter} do
+    test "update_response_condition/2 with invalid data returns error changeset", %{
+      filter: filter
+    } do
       response_condition = response_condition_fixture(filter)
-      assert {:error, %Ecto.Changeset{}} = Core.update_response_condition(response_condition, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Core.update_response_condition(response_condition, @invalid_attrs)
+
       assert response_condition == Core.get_response_condition!(response_condition.id)
     end
 
     test "delete_response_condition/1 deletes the response_condition", %{filter: filter} do
       response_condition = response_condition_fixture(filter)
       assert {:ok, %ResponseCondition{}} = Core.delete_response_condition(response_condition)
-      assert_raise Ecto.NoResultsError, fn -> Core.get_response_condition!(response_condition.id) end
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Core.get_response_condition!(response_condition.id)
+      end
     end
 
     test "change_response_condition/1 returns a response_condition changeset", %{filter: filter} do

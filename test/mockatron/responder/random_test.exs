@@ -61,18 +61,22 @@ defmodule Mockatron.Responder.RandomTest do
   end
 
   test "get random responses", %{server: pid} do
-    current_random_responses = 1..6
-    |> Enum.map(
-         fn _ ->
-           %{body: body} = Mockatron.Responder.Random.response(pid, nil);
-           Jason.decode!(body);
-         end)
+    current_random_responses =
+      1..6
+      |> Enum.map(fn _ ->
+        %{body: body} = Mockatron.Responder.Random.response(pid, nil)
+        Jason.decode!(body)
+      end)
+
     assert @sequential_responses != current_random_responses
   end
 
   test "get random state", %{server: pid} do
-    assert %Mockatron.Responder.Random.State{agent: agent, size: size, index: index, count: count} =
-             Mockatron.Responder.Random.state(pid)
+    assert %Mockatron.Responder.Random.State{
+             agent: _agent,
+             size: _size,
+             index: _index,
+             count: _count
+           } = Mockatron.Responder.Random.state(pid)
   end
-
 end

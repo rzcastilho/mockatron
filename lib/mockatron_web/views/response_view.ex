@@ -11,10 +11,12 @@ defmodule MockatronWeb.ResponseView do
   end
 
   def render("response.json", %{response: response}) do
-    %{id: response.id,
-      label: response.label,
-      http_code: response.http_code,
+    %{
+      id: response.id,
       body: response.body,
-      enable: response.enable}
+      enable: response.enable,
+      http_code: response.http_code,
+      label: response.label
+    }
   end
 end

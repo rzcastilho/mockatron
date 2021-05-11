@@ -11,9 +11,6 @@ defmodule MockatronWeb.FilterView do
   end
 
   def render("filter.json", %{filter: filter}) do
-    %{id: filter.id,
-      label: filter.label,
-      priority: filter.priority,
-      enable: filter.enable}
+    %{id: filter.id, enable: filter.enable, label: filter.label, priority: filter.priority}
   end
 end

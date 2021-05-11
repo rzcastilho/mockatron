@@ -11,9 +11,11 @@ defmodule MockatronWeb.ResponseConditionView do
   end
 
   def render("response_condition.json", %{response_condition: response_condition}) do
-    %{id: response_condition.id,
+    %{
+      id: response_condition.id,
       field_type: response_condition.field_type,
       operator: response_condition.operator,
-      value: response_condition.value}
+      value: response_condition.value
+    }
   end
 end

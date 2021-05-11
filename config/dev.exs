@@ -9,8 +9,7 @@ config :mockatron, Mockatron.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-config :mockatron, Mockatron.Mailer,
-  adapter: Bamboo.TestAdapter
+config :mockatron, Mockatron.Mailer, adapter: Bamboo.TestAdapter
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -23,7 +22,15 @@ config :mockatron, MockatronWeb.Endpoint,
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
-  watchers: []
+  watchers: [
+    node: [
+      "node_modules/webpack/bin/webpack.js",
+      "--mode",
+      "development",
+      "--watch-stdin",
+      cd: Path.expand("../assets", __DIR__)
+    ]
+  ]
 
 # ## SSL Support
 #
@@ -55,7 +62,7 @@ config :mockatron, MockatronWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/mockatron_web/{live,views}/.*(ex)$",
+      ~r"lib/mockatron_web/(live|views)/.*(ex)$",
       ~r"lib/mockatron_web/templates/.*(eex)$"
     ]
   ]

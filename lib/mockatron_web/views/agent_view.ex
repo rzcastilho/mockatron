@@ -11,13 +11,15 @@ defmodule MockatronWeb.AgentView do
   end
 
   def render("agent.json", %{agent: agent}) do
-    %{id: agent.id,
-      method: agent.method,
-      protocol: agent.protocol,
-      host: agent.host,
-      port: agent.port,
-      path: agent.path,
+    %{
+      id: agent.id,
       content_type: agent.content_type,
+      host: agent.host,
+      method: agent.method,
+      path: agent.path,
+      path_regex: agent.path_regex,
+      port: agent.port,
+      protocol: agent.protocol,
       responder: agent.responder,
       operation: agent.operation
     }

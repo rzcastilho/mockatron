@@ -6,7 +6,8 @@ defmodule MockatronWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_flash
+    plug :fetch_live_flash
+    plug :put_root_layout, {MockatronWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -38,14 +39,17 @@ defmodule MockatronWeb.Router do
   end
 
   scope "/v1/mockatron/ui", MockatronWeb do
-    pipe_through :browser # Use the default browser stack
-    get "/", PageController, :index
+    # Use the default browser stack
+    pipe_through :browser
+    live "/", PageLive, :index
   end
 
   scope "/v1/mockatron/api", MockatronWeb do
     pipe_through [:jwt_authenticated, :api]
+
     resources "/agents", AgentController, except: [:new, :edit] do
       resources "/responses", ResponseController, except: [:new, :edit]
+
       resources "/filters", FilterController, except: [:new, :edit] do
         resources "/request_conditions", RequestConditionController, except: [:new, :edit]
         resources "/response_conditions", ResponseConditionController, except: [:new, :edit]
@@ -53,9 +57,29 @@ defmodule MockatronWeb.Router do
     end
   end
 
+  # Other scopes may use custom stacks.
+  # scope "/api", MockatronWeb do
+  #   pipe_through :api
+  # end
+
+  # Enables LiveDashboard only for development
+  #
+  # If you want to use the LiveDashboard in production, you should put
+  # it behind authentication and allow only admins to access it.
+  # If your application does not have an admins-only section yet,
+  # you can use Plug.BasicAuth to set up some basic authentication
+  # as long as you are also using SSL (which you should anyway).
+  if Mix.env() in [:dev, :test] do
+    import Phoenix.LiveDashboard.Router
+
+    scope "/v1/mockatron/ui" do
+      pipe_through :browser
+      live_dashboard "/dashboard", metrics: MockatronWeb.Telemetry, ecto_repos: [Mockatron.Repo]
+    end
+  end
+
   scope "/", MockatronWeb do
     pipe_through [:jwt_authenticated, :mock]
     match :*, "/*path", MockController, :response
   end
-
 end

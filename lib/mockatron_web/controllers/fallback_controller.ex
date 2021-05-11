@@ -6,16 +6,20 @@ defmodule MockatronWeb.FallbackController do
   """
   use MockatronWeb, :controller
 
+  # This clause handles errors returned by Ecto's insert/update/delete.
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
     conn
     |> put_status(:unprocessable_entity)
-    |> render(MockatronWeb.ChangesetView, "error.json", changeset: changeset)
+    |> put_view(MockatronWeb.ChangesetView)
+    |> render("error.json", changeset: changeset)
   end
 
+  # This clause is an example of how to handle resources that cannot be found.
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
-    |> render(MockatronWeb.ErrorView, :"404")
+    |> put_view(MockatronWeb.ErrorView)
+    |> render(:"404")
   end
 
   def call(conn, {:error, :email_not_found}) do
@@ -47,5 +51,4 @@ defmodule MockatronWeb.FallbackController do
     |> put_status(:bad_request)
     |> json(%{code: 99, error: "Bad Request", message: message})
   end
-
 end

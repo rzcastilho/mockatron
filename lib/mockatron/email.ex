@@ -7,7 +7,9 @@ defmodule Mockatron.Email do
     |> from("postmaster@mockatron.io")
     |> subject("Welcome to mockatron.io!!!")
     |> put_html_layout({MockatronWeb.EmailView, "verify_email.html"})
-    |> render("verify_email.html", email_address: email_address, verification_url: verification_url)
+    |> render("verify_email.html",
+      email_address: email_address,
+      verification_url: verification_url
+    )
   end
-
 end
