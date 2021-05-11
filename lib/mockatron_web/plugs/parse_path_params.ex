@@ -8,18 +8,26 @@ defmodule MockatronWeb.ParsePathParams do
     conn
   end
 
-  def call(%Plug.Conn{assigns: %{mockatron: %{agent: %{agent: %Agent{path_regex: nil}}}}} = conn, _) do
+  def call(
+        %Plug.Conn{assigns: %{mockatron: %{agent: %{agent: %Agent{path_regex: nil}}}}} = conn,
+        _
+      ) do
     conn
   end
 
-  def call(%Plug.Conn{assigns: %{mockatron: %{agent: %{agent: %Agent{path_regex: path_regex}}}}, request_path: request_path} = conn, _) do
+  def call(
+        %Plug.Conn{
+          assigns: %{mockatron: %{agent: %{agent: %Agent{path_regex: path_regex}}}},
+          request_path: request_path
+        } = conn,
+        _
+      ) do
     conn
     |> assign(
-         :path_params,
-         path_regex
-         |> Regex.compile!()
-         |> Regex.named_captures(request_path)
-       )
+      :path_params,
+      path_regex
+      |> Regex.compile!()
+      |> Regex.named_captures(request_path)
+    )
   end
-
 end

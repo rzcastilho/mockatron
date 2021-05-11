@@ -8,7 +8,12 @@ defmodule MockatronWeb.UtilsTest do
   alias Mockatron.Guardian
   alias Mockatron.Auth
 
-  @user_valid_attrs %{email: "test@mockatron.io", password: "Welcome1", password_confirmation: "Welcome1", verified: true}
+  @user_valid_attrs %{
+    email: "test@mockatron.io",
+    password: "Welcome1",
+    password_confirmation: "Welcome1",
+    verified: true
+  }
 
   @signature %Signature{
     user_id: 1,
@@ -197,15 +202,20 @@ defmodule MockatronWeb.UtilsTest do
   end
 
   test "Stringify agent with content type" do
-    assert Helper.agent_stringify(Map.merge(@signature, %{content_type: "application/json"})) == "[User ID: 1] GET http://mockatron.io:80/do [Content Type: application/json]"
+    assert Helper.agent_stringify(Map.merge(@signature, %{content_type: "application/json"})) ==
+             "[User ID: 1] GET http://mockatron.io:80/do [Content Type: application/json]"
   end
 
   test "Stringify agent with operation" do
-    assert Helper.agent_stringify(Map.merge(@signature, %{operation: "doSomething"})) == "[User ID: 1] GET http://mockatron.io:80/do [Operation: doSomething]"
+    assert Helper.agent_stringify(Map.merge(@signature, %{operation: "doSomething"})) ==
+             "[User ID: 1] GET http://mockatron.io:80/do [Operation: doSomething]"
   end
 
   test "Stringify agent with content type and operation" do
-    assert Helper.agent_stringify(Map.merge(@signature, %{content_type: "application/json", operation: "doSomething"})) == "[User ID: 1] GET http://mockatron.io:80/do [Content Type: application/json] [Operation: doSomething]"
+    assert Helper.agent_stringify(
+             Map.merge(@signature, %{content_type: "application/json", operation: "doSomething"})
+           ) ==
+             "[User ID: 1] GET http://mockatron.io:80/do [Content Type: application/json] [Operation: doSomething]"
   end
 
   test "Generate agent hash with signature" do
@@ -218,79 +228,90 @@ defmodule MockatronWeb.UtilsTest do
 
   test "Filter LABEL success" do
     filtered_agent = Helper.filter_responses(@agent, @filter_label_success)
-    assert [%{http_code: 200, label: "Success"}|_] = filtered_agent.responses
+    assert [%{http_code: 200, label: "Success"} | _] = filtered_agent.responses
   end
 
   test "Filter LABEL error" do
     filtered_agent = Helper.filter_responses(@agent, @filter_label_error)
-    assert [%{http_code: 400, label: "Error"}|_] = filtered_agent.responses
+    assert [%{http_code: 400, label: "Error"} | _] = filtered_agent.responses
   end
 
   test "Filter HTTP_CODE success" do
     filtered_agent = Helper.filter_responses(@agent, @filter_http_code_success)
-    assert [%{http_code: 200, label: "Success"}|_] = filtered_agent.responses
+    assert [%{http_code: 200, label: "Success"} | _] = filtered_agent.responses
   end
 
   test "Filter HTTP_CODE error" do
     filtered_agent = Helper.filter_responses(@agent, @filter_http_code_error)
-    assert [%{http_code: 400, label: "Error"}|_] = filtered_agent.responses
+    assert [%{http_code: 400, label: "Error"} | _] = filtered_agent.responses
   end
 
   test "Filter BODY success" do
     filtered_agent = Helper.filter_responses(@agent, @filter_body_success)
-    assert [%{http_code: 200, label: "Success"}|_] = filtered_agent.responses
+    assert [%{http_code: 200, label: "Success"} | _] = filtered_agent.responses
   end
 
   test "Filter BODY error" do
     filtered_agent = Helper.filter_responses(@agent, @filter_body_error)
-    assert [%{http_code: 400, label: "Error"}|_] = filtered_agent.responses
+    assert [%{http_code: 400, label: "Error"} | _] = filtered_agent.responses
   end
 
   describe "Message Default" do
     setup [:sign_in]
 
     test "Agent Not Found application/json Response", %{conn: conn} do
-      conn = conn
-      |> put_req_header("content-type", "application/json")
-      |> get("/json")
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> get("/json")
+
       assert conn.resp_body == @not_found_json
     end
 
     test "Agent Not Found text/xml Response", %{conn: conn} do
-      conn = conn
-      |> put_req_header("content-type", "text/xml")
-      |> get("/json")
+      conn =
+        conn
+        |> put_req_header("content-type", "text/xml")
+        |> get("/json")
+
       assert conn.resp_body == @not_found_xml
     end
 
     test "Agent Not Found application/soap+xml Response", %{conn: conn} do
-      conn = conn
-      |> put_req_header("content-type", "application/soap+xml")
-      |> get("/json")
+      conn =
+        conn
+        |> put_req_header("content-type", "application/soap+xml")
+        |> get("/json")
+
       assert conn.resp_body == @not_found_xml
     end
 
     test "Agent Not Found text/plain Response", %{conn: conn} do
-      conn = conn
-      |> put_req_header("content-type", "text/plain")
-      |> get("/json")
+      conn =
+        conn
+        |> put_req_header("content-type", "text/plain")
+        |> get("/json")
+
       assert conn.resp_body == @not_found_text
     end
 
     test "Agent Not Found no content type Response", %{conn: conn} do
-      conn = conn
-      |> get("/json")
+      conn =
+        conn
+        |> get("/json")
+
       assert conn.resp_body == @not_found_text
     end
-
   end
 
   def sign_in(_) do
     {:ok, user} = Auth.create_user(@user_valid_attrs)
     {:ok, token, _} = Guardian.encode_and_sign(user, %{}, token_type: :access)
-    conn = build_conn()
-    |> put_req_header("authorization", "bearer " <> token)
+
+    conn =
+      build_conn()
+      |> put_req_header("authorization", "bearer " <> token)
+
     {:ok, conn: conn}
   end
-
 end

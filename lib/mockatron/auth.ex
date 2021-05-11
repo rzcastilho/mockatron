@@ -56,6 +56,7 @@ defmodule Mockatron.Auth do
     case Repo.get(User, id) do
       %User{} = user ->
         {:ok, user}
+
       _ ->
         {:error, :not_found}
     end
@@ -98,7 +99,7 @@ defmodule Mockatron.Auth do
   end
 
   @doc """
-  Deletes a User.
+  Deletes a user.
 
   ## Examples
 
@@ -119,11 +120,11 @@ defmodule Mockatron.Auth do
   ## Examples
 
       iex> change_user(user)
-      %Ecto.Changeset{source: %User{}}
+      %Ecto.Changeset{data: %User{}}
 
   """
-  def change_user(%User{} = user) do
-    User.changeset(user, %{})
+  def change_user(%User{} = user, attrs \\ %{}) do
+    User.changeset(user, attrs)
   end
 
   def get_by_email(email) when is_binary(email) do
@@ -131,6 +132,7 @@ defmodule Mockatron.Auth do
       nil ->
         no_user_verify()
         {:error, :email_not_found}
+
       user ->
         {:ok, user}
     end
@@ -152,8 +154,10 @@ defmodule Mockatron.Auth do
     case email_password_auth(email, password) do
       {:ok, %User{verified: true} = user} ->
         Guardian.encode_and_sign(user)
+
       {:ok, %User{}} ->
         {:error, :email_not_verified}
+
       error ->
         error
     end
@@ -164,5 +168,4 @@ defmodule Mockatron.Auth do
     |> User.changeset(%{verified: true})
     |> Repo.update()
   end
-
 end

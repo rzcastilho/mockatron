@@ -16,8 +16,7 @@ defmodule Mockatron.Core.Response do
   @doc false
   def changeset(response, attrs) do
     response
-    |> cast(attrs, [:label, :http_code, :body, :enable])
-    |> validate_required([:label, :http_code, :body, :enable])
+    |> cast(attrs, [:body, :enable, :http_code, :label])
+    |> validate_required([:body, :enable, :http_code, :label])
   end
-
 end

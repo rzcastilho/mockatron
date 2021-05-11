@@ -18,7 +18,7 @@ defmodule Mockatron.Core.Filter do
   @doc false
   def changeset(filter, attrs) do
     filter
-    |> cast(attrs, [:label, :priority, :enable])
-    |> validate_required([:label, :priority, :enable])
+    |> cast(attrs, [:enable, :label, :priority])
+    |> validate_required([:enable, :label, :priority])
   end
 end

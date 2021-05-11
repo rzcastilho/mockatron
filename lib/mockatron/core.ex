@@ -75,7 +75,7 @@ defmodule Mockatron.Core do
   end
 
   @doc """
-  Deletes a Agent.
+  Deletes a agent.
 
   ## Examples
 
@@ -96,16 +96,16 @@ defmodule Mockatron.Core do
   ## Examples
 
       iex> change_agent(agent)
-      %Ecto.Changeset{source: %Agent{}}
+      %Ecto.Changeset{data: %Agent{}}
 
   """
-  def change_agent(%Agent{} = agent) do
-    Agent.changeset(agent, %{})
+  def change_agent(%Agent{} = agent, attrs \\ %{}) do
+    Agent.changeset(agent, attrs)
   end
 
   def list_agents_by_user(user) do
     Ecto.assoc(user, :agents)
-    |> Repo.all
+    |> Repo.all()
   end
 
   def get_agent_from_user(id, user) do
@@ -181,7 +181,7 @@ defmodule Mockatron.Core do
   end
 
   @doc """
-  Deletes a Response.
+  Deletes a response.
 
   ## Examples
 
@@ -202,16 +202,16 @@ defmodule Mockatron.Core do
   ## Examples
 
       iex> change_response(response)
-      %Ecto.Changeset{source: %Response{}}
+      %Ecto.Changeset{data: %Response{}}
 
   """
-  def change_response(%Response{} = response) do
-    Response.changeset(response, %{})
+  def change_response(%Response{} = response, attrs \\ %{}) do
+    Response.changeset(response, attrs)
   end
 
   def list_responses_by_agent(agent) do
     Ecto.assoc(agent, :responses)
-    |> Repo.all
+    |> Repo.all()
   end
 
   def get_response_from_agent(id, agent) do
@@ -287,7 +287,7 @@ defmodule Mockatron.Core do
   end
 
   @doc """
-  Deletes a Filter.
+  Deletes a filter.
 
   ## Examples
 
@@ -308,16 +308,16 @@ defmodule Mockatron.Core do
   ## Examples
 
       iex> change_filter(filter)
-      %Ecto.Changeset{source: %Filter{}}
+      %Ecto.Changeset{data: %Filter{}}
 
   """
-  def change_filter(%Filter{} = filter) do
-    Filter.changeset(filter, %{})
+  def change_filter(%Filter{} = filter, attrs \\ %{}) do
+    Filter.changeset(filter, attrs)
   end
 
   def list_filters_by_agent(agent) do
     Ecto.assoc(agent, :filters)
-    |> Repo.all
+    |> Repo.all()
   end
 
   def get_filter_from_agent(id, agent) do
@@ -393,7 +393,7 @@ defmodule Mockatron.Core do
   end
 
   @doc """
-  Deletes a RequestCondition.
+  Deletes a request_condition.
 
   ## Examples
 
@@ -414,20 +414,22 @@ defmodule Mockatron.Core do
   ## Examples
 
       iex> change_request_condition(request_condition)
-      %Ecto.Changeset{source: %RequestCondition{}}
+      %Ecto.Changeset{data: %RequestCondition{}}
 
   """
-  def change_request_condition(%RequestCondition{} = request_condition) do
-    RequestCondition.changeset(request_condition, %{})
+  def change_request_condition(%RequestCondition{} = request_condition, attrs \\ %{}) do
+    RequestCondition.changeset(request_condition, attrs)
   end
 
   def list_request_conditions_by_filter(filter) do
     Ecto.assoc(filter, :request_conditions)
-    |> Repo.all
+    |> Repo.all()
   end
 
   def get_request_condition_from_filter(id, filter) do
-    Repo.one(from a in RequestCondition, select: a, where: ^id == a.id and ^filter.id == a.filter_id)
+    Repo.one(
+      from a in RequestCondition, select: a, where: ^id == a.id and ^filter.id == a.filter_id
+    )
   end
 
   alias Mockatron.Core.ResponseCondition
@@ -499,7 +501,7 @@ defmodule Mockatron.Core do
   end
 
   @doc """
-  Deletes a ResponseCondition.
+  Deletes a response_condition.
 
   ## Examples
 
@@ -520,20 +522,21 @@ defmodule Mockatron.Core do
   ## Examples
 
       iex> change_response_condition(response_condition)
-      %Ecto.Changeset{source: %ResponseCondition{}}
+      %Ecto.Changeset{data: %ResponseCondition{}}
 
   """
-  def change_response_condition(%ResponseCondition{} = response_condition) do
-    ResponseCondition.changeset(response_condition, %{})
+  def change_response_condition(%ResponseCondition{} = response_condition, attrs \\ %{}) do
+    ResponseCondition.changeset(response_condition, attrs)
   end
 
   def list_response_conditions_by_filter(filter) do
     Ecto.assoc(filter, :response_conditions)
-    |> Repo.all
+    |> Repo.all()
   end
 
   def get_response_condition_from_filter(id, filter) do
-    Repo.one(from a in ResponseCondition, select: a, where: ^id == a.id and ^filter.id == a.filter_id)
+    Repo.one(
+      from a in ResponseCondition, select: a, where: ^id == a.id and ^filter.id == a.filter_id
+    )
   end
-
 end

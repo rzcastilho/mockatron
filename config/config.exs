@@ -13,9 +13,10 @@ config :mockatron,
 # Configures the endpoint
 config :mockatron, MockatronWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "W9huSVx7uPKmE93tduynULJDNBDMlKht0vXeja0p/tloh7quBE7mTYxWvN4ILwRI",
-  render_errors: [view: MockatronWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Mockatron.PubSub, adapter: Phoenix.PubSub.PG2]
+  secret_key_base: "RkKJhaPjmIYT7w1yysXlv8BsGc/htJdfWr8XyIQMU8OH9hPqD4U8mWp6EQDPZL7k",
+  render_errors: [view: MockatronWeb.ErrorView, accepts: ~w(html json), layout: false],
+  pubsub_server: Mockatron.PubSub,
+  live_view: [signing_salt: "Kdu9aK/a"]
 
 # Configures Elixir's Logger
 config :logger, :console,

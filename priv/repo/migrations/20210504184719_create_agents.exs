@@ -3,15 +3,15 @@ defmodule Mockatron.Repo.Migrations.CreateAgents do
 
   def change do
     create table(:agents) do
-      add :method, :string
-      add :protocol, :string
+      add :content_type, :string
       add :host, :string
-      add :port, :integer
+      add :method, :string
       add :path, :string
       add :path_regex, :string
-      add :operation, :string
-      add :content_type, :string
+      add :port, :integer
+      add :protocol, :string
       add :responder, :string
+      add :operation, :string
       add :user_id, references(:users, on_delete: :delete_all)
 
       timestamps()
