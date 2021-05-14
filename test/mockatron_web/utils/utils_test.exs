@@ -263,7 +263,7 @@ defmodule MockatronWeb.UtilsTest do
       conn =
         conn
         |> put_req_header("content-type", "application/json")
-        |> get("/json")
+        |> get("/v1/mockatron/mock/json")
 
       assert conn.resp_body == @not_found_json
     end
@@ -272,7 +272,7 @@ defmodule MockatronWeb.UtilsTest do
       conn =
         conn
         |> put_req_header("content-type", "text/xml")
-        |> get("/json")
+        |> get("/v1/mockatron/mock/json")
 
       assert conn.resp_body == @not_found_xml
     end
@@ -281,7 +281,7 @@ defmodule MockatronWeb.UtilsTest do
       conn =
         conn
         |> put_req_header("content-type", "application/soap+xml")
-        |> get("/json")
+        |> get("/v1/mockatron/mock/json")
 
       assert conn.resp_body == @not_found_xml
     end
@@ -290,7 +290,7 @@ defmodule MockatronWeb.UtilsTest do
       conn =
         conn
         |> put_req_header("content-type", "text/plain")
-        |> get("/json")
+        |> get("/v1/mockatron/mock/json")
 
       assert conn.resp_body == @not_found_text
     end
@@ -298,7 +298,7 @@ defmodule MockatronWeb.UtilsTest do
     test "Agent Not Found no content type Response", %{conn: conn} do
       conn =
         conn
-        |> get("/json")
+        |> get("/v1/mockatron/mock/json")
 
       assert conn.resp_body == @not_found_text
     end

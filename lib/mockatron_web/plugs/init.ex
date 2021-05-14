@@ -40,6 +40,8 @@ defmodule MockatronWeb.Init do
         [target_port] -> String.to_integer(target_port)
       end
 
+    <<"/v1/mockatron/mock", path::binary>> = path
+
     signature = %Signature{
       user_id: String.to_integer(user_id),
       method: method,
