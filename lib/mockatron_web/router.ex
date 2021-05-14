@@ -38,12 +38,6 @@ defmodule MockatronWeb.Router do
     get "/resend", UserController, :resend_token
   end
 
-  scope "/v1/mockatron/ui", MockatronWeb do
-    # Use the default browser stack
-    pipe_through :browser
-    live "/", PageLive, :index
-  end
-
   scope "/v1/mockatron/api", MockatronWeb do
     pipe_through [:jwt_authenticated, :api]
 
@@ -57,29 +51,15 @@ defmodule MockatronWeb.Router do
     end
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", MockatronWeb do
-  #   pipe_through :api
-  # end
-
-  # Enables LiveDashboard only for development
-  #
-  # If you want to use the LiveDashboard in production, you should put
-  # it behind authentication and allow only admins to access it.
-  # If your application does not have an admins-only section yet,
-  # you can use Plug.BasicAuth to set up some basic authentication
-  # as long as you are also using SSL (which you should anyway).
-  if Mix.env() in [:dev, :test] do
-    import Phoenix.LiveDashboard.Router
-
-    scope "/v1/mockatron/ui" do
-      pipe_through :browser
-      live_dashboard "/dashboard", metrics: MockatronWeb.Telemetry, ecto_repos: [Mockatron.Repo]
-    end
-  end
-
-  scope "/", MockatronWeb do
+  scope "/v1/mockatron/mock", MockatronWeb do
     pipe_through [:jwt_authenticated, :mock]
     match :*, "/*path", MockController, :response
   end
+
+  scope "/", MockatronWeb do
+    # Use the default browser stack
+    pipe_through :browser
+    live "/", PageLive, :index
+  end
+
 end

@@ -21,6 +21,7 @@ defmodule MockatronWeb.InitTest do
   test "Init plug with mockatron structure", %{conn: conn} do
     conn =
       conn
+      |> Map.put(:request_path, "/v1/mockatron/mock")
       |> Init.call(%{})
 
     assert conn.assigns[:mockatron]
