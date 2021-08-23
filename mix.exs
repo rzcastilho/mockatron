@@ -6,6 +6,7 @@ defmodule Mockatron.MixProject do
       app: :mockatron,
       version: "0.1.0",
       elixir: "~> 1.7",
+      elixirc_options: [warnings_as_errors: false],
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
