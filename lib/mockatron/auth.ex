@@ -4,8 +4,10 @@ defmodule Mockatron.Auth do
   """
 
   import Ecto.Query, warn: false
-  import Bcrypt, only: [verify_pass: 2, no_user_verify: 0]
+  #import Bcrypt, only: [verify_pass: 2, no_user_verify: 0]
 
+  alias Argon2
+  
   alias Mockatron.Repo
   alias Mockatron.Guardian
 
@@ -130,7 +132,7 @@ defmodule Mockatron.Auth do
   def get_by_email(email) when is_binary(email) do
     case Repo.get_by(User, email: email) do
       nil ->
-        no_user_verify()
+        Argon2.no_user_verify()
         {:error, :email_not_found}
 
       user ->
@@ -139,7 +141,7 @@ defmodule Mockatron.Auth do
   end
 
   defp verify_password(password, %User{} = user) when is_binary(password) do
-    if verify_pass(password, user.password_hash) do
+    if Argon2.verify_pass(password, user.password_hash) do
       {:ok, user}
     else
       {:error, :invalid_password}
