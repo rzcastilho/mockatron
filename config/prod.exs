@@ -11,14 +11,15 @@ use Mix.Config
 # before starting your production server.
 config :mockatron, MockatronWeb.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [scheme: "https", host: "mockatron.herokuapp.com", port: 443],
+  url: [host: System.get_env("APP_NAME") <> ".gigalixirapp.com", port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",
   check_origin: [
     "//mockatron.io",
     "//www.mockatron.io",
-    "//mockatron.herokuapp.com"
-  ]
+    System.get_env("APP_NAME") <> ".gigalixirapp.com"
+  ],
+  server: true
 
 # Do not print debug messages in production
 config :logger, level: :info

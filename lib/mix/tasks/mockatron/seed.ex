@@ -1,7 +1,8 @@
 defmodule Mix.Tasks.Mockatron.Seed do
   use Mix.Task
   import Ecto.Query
-  import Bcrypt, only: [hash_pwd_salt: 1]
+  #import Bcrypt, only: [hash_pwd_salt: 1]
+  alias Argon2
   alias Mockatron.Repo
   alias Mockatron.Auth.User
   alias Mockatron.Core.Agent
@@ -35,7 +36,7 @@ defmodule Mix.Tasks.Mockatron.Seed do
           %{id: user_id} =
             Repo.insert!(%User{
               email: "test@mockatron.io",
-              password_hash: hash_pwd_salt("Welcome1"),
+              password_hash: Argon2.hash_pwd_salt("Welcome1"),
               verified: true
             })
 

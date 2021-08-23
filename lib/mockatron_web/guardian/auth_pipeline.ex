@@ -4,7 +4,7 @@ defmodule MockatronWeb.Guardian.AuthPipeline do
     module: Mockatron.Guardian,
     error_handler: MockatronWeb.AuthErrorHandler
 
-  plug Guardian.Plug.VerifyHeader, realm: "Bearer"
+  plug Guardian.Plug.VerifyHeader
   plug Guardian.Plug.EnsureAuthenticated
   plug Guardian.Plug.LoadResource
 end

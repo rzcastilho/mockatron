@@ -1,7 +1,8 @@
 defmodule Mockatron.Auth.User do
   use Ecto.Schema
   import Ecto.Changeset
-  import Bcrypt, only: [hash_pwd_salt: 1]
+  #import Bcrypt, only: [hash_pwd_salt: 1]
+  alias Argon2
 
   schema "users" do
     field :email, :string
@@ -38,8 +39,8 @@ defmodule Mockatron.Auth.User do
 
   defp put_password_hash(changeset) do
     case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
-        put_change(changeset, :password_hash, hash_pwd_salt(pass))
+      %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
+        put_change(changeset, :password_hash, Argon2.hash_pwd_salt(password))
 
       _ ->
         changeset
