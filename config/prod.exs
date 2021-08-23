@@ -17,7 +17,7 @@ config :mockatron, MockatronWeb.Endpoint,
   check_origin: [
     "//mockatron.io",
     "//www.mockatron.io",
-    System.get_env("APP_NAME") <> ".gigalixirapp.com"
+    "//" <> System.get_env("APP_NAME") <> ".gigalixirapp.com"
   ],
   server: true
 
