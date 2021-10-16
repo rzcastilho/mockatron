@@ -4,6 +4,7 @@ defmodule Mockatron.Core.Response do
 
   schema "responses" do
     field :body, :string, default: ""
+    field :template, :boolean, default: false
     field :enable, :boolean, default: true
     field :http_code, :integer
     field :label, :string

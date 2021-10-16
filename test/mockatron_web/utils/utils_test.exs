@@ -193,8 +193,8 @@ defmodule MockatronWeb.UtilsTest do
     updated_at: ~N[2018-12-18 00:35:36.184850]
   }
 
-  @not_found_xml "<mockatron>\n  <code>404</code>\n  <message>Not Found</message>\n  <description>No agent found to meet this request</description>\n</mockatron>"
-  @not_found_json "{\n  \"code\":404,\n  \"message\":\"Not Found\",\n  \"description\":\"No agent found to meet this request\"\n}"
+  @not_found_xml "<mockatron>\n    <code>404</code>\n    <message>Not Found</message>\n    <description>No agent found to meet this request</description>\n</mockatron>"
+  @not_found_json "{\n    \"code\": 404,\n    \"message\": \"Not Found\",\n    \"description\": \"No agent found to meet this request\"\n}"
   @not_found_text "code: 404\nmessage: Not Found\ndescription: No agent found to meet this request"
 
   test "Stringify agent" do

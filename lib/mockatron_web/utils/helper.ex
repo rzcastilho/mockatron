@@ -5,10 +5,8 @@ defmodule MockatronWeb.Utils.Helper do
   alias Mockatron.Core.Agent
   alias Mockatron.Core.Filter
   alias Mockatron.Core.Response
-
-  @not_found_xml "<mockatron>\n  <code>404</code>\n  <message>Not Found</message>\n  <description>No agent found to meet this request</description>\n</mockatron>"
-  @not_found_json "{\n  \"code\":404,\n  \"message\":\"Not Found\",\n  \"description\":\"No agent found to meet this request\"\n}"
-  @not_found_text "code: 404\nmessage: Not Found\ndescription: No agent found to meet this request"
+  
+  @error_mock_templates "lib/mockatron_web/templates/error/mock"
 
   def agent_stringify(%Signature{} = signature) do
     case {signature.content_type, signature.operation} do
@@ -241,31 +239,18 @@ defmodule MockatronWeb.Utils.Helper do
     conn
     |> put_resp_content_type(content_type)
     |> put_status(:not_found)
-    |> send_resp(404, @not_found_json)
+    |> send_resp(404, EEx.eval_file(Path.join([@error_mock_templates, "json.eex"]), assigns: [code: 404, message: "Not Found", description: "No agent found to meet this request"], trim: true))
   end
 
   def send_agent_not_found_resp(
         %Plug.Conn{
-          assigns: %{mockatron: %{signature: %{content_type: "text/xml" = content_type}}}
+          assigns: %{mockatron: %{signature: %{content_type: content_type}}}
         } = conn
-      ) do
+      ) when content_type in ["text/xml", "application/soap+xml"] do
     conn
     |> put_resp_content_type(content_type)
     |> put_status(:not_found)
-    |> send_resp(404, @not_found_xml)
-  end
-
-  def send_agent_not_found_resp(
-        %Plug.Conn{
-          assigns: %{
-            mockatron: %{signature: %{content_type: "application/soap+xml" = content_type}}
-          }
-        } = conn
-      ) do
-    conn
-    |> put_resp_content_type(content_type)
-    |> put_status(:not_found)
-    |> send_resp(404, @not_found_xml)
+    |> send_resp(404, EEx.eval_file(Path.join([@error_mock_templates, "xml.eex"]), assigns: [code: 404, message: "Not Found", description: "No agent found to meet this request"], trim: true))
   end
 
   def send_agent_not_found_resp(
@@ -274,6 +259,38 @@ defmodule MockatronWeb.Utils.Helper do
     conn
     |> put_resp_content_type("text/plain")
     |> put_status(:not_found)
-    |> send_resp(404, @not_found_text)
+    |> send_resp(404, EEx.eval_file(Path.join([@error_mock_templates, "plain.eex"]), assigns: [code: 404, message: "Not Found", description: "No agent found to meet this request"], trim: true))
   end
+  
+  def send_error_processing_template_resp(
+        %Plug.Conn{
+          assigns: %{mockatron: %{signature: %{content_type: "application/json" = content_type}}}
+        } = conn, error, detail
+      ) do
+    conn
+    |> put_resp_content_type(content_type)
+    |> put_status(:not_found)
+    |> send_resp(500, EEx.eval_file(Path.join([@error_mock_templates, "json.eex"]), assigns: [code: 500, message: "Internal Server Error", description: "Error processing response template", error: error, detail: detail], trim: true))
+  end
+
+  def send_error_processing_template_resp(
+        %Plug.Conn{
+          assigns: %{mockatron: %{signature: %{content_type: content_type}}}
+        } = conn, error, detail
+      ) when content_type in ["text/xml", "application/soap+xml"] do
+    conn
+    |> put_resp_content_type(content_type)
+    |> put_status(:not_found)
+    |> send_resp(500, EEx.eval_file(Path.join([@error_mock_templates, "xml.eex"]), assigns: [code: 500, message: "Internal Server Error", description: "Error processing response template", error: error, detail: detail], trim: true))
+  end
+
+  def send_error_processing_template_resp(
+        %Plug.Conn{assigns: %{mockatron: %{signature: %{content_type: _content_type}}}} = conn, error, detail
+      ) do
+    conn
+    |> put_resp_content_type("text/plain")
+    |> put_status(:not_found)
+    |> send_resp(500, EEx.eval_file(Path.join([@error_mock_templates, "plain.eex"]), assigns: [code: 500, message: "Internal Server Error", description: "Error processing response template", error: error, detail: detail], trim: true))
+  end
+  
 end
