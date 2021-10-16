@@ -11,17 +11,31 @@ on:
       - develop
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-    name: OTP 24.1 / Elixir 1.12.3
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      MIX_ENV: test
+    name: Mockatron Test (OTP 24.1 / Elixir 1.12.3)
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
-      - uses: actions/checkout@v2
-      - uses: erlef/setup-beam@v1
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setup Elixir and Erlang
+        uses: erlef/setup-beam@v1
         with:
           otp-version: 24.1
           elixir-version: 1.12.3
-      - run: mix deps.get
-      - run: mix coveralls.github
+      - name: Get Dependencies
+        run: mix deps.get
+      - name: Run Tests
+        run: mix coveralls.github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MIX_ENV: test
