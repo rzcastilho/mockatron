@@ -1,8 +1,13 @@
-# Mockatron [![Build Status](https://travis-ci.org/rzcastilho/mockatron.svg?branch=master "Build Status")](http://travis-ci.org/rzcastilho/mockatron) [![Coverage Status](https://coveralls.io/repos/github/rzcastilho/mockatron/badge.svg?branch=master)](https://coveralls.io/github/rzcastilho/mockatron)
+[![ci workflow](https://github.com/rzcastilho/mockatron/actions/workflows/ci.yml/badge.svg)](https://github.com/rzcastilho/mockatron/actions/workflows/ci.yml/badge.svg)
+[![coverage status](https://coveralls.io/repos/github/rzcastilho/mockatron/badge.svg)](https://coveralls.io/github/rzcastilho/mockatron)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/rzcastilho/mockatron)](https://github.com/rzcastilho/mockatron/releases)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/rzcastilho/mockatron/blob/master/LICENSE)
+
+# Mockatron
 
 ![Mockatron Logo](docs/images/mockatron-logo.png "Mockatron Logo")
 
-### The amazing mock server!
+## The amazing mock server!!!
 
 Each mock at **Mockatron** is composed of an **Agent** with one or more **Responses**.
 

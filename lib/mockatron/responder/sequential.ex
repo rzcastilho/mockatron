@@ -13,7 +13,7 @@ defmodule Mockatron.Responder.Sequential do
     GenServer.call(pid, :state)
   end
 
-  def response(pid, _conn) do
+  def response(pid) do
     GenServer.call(pid, :response)
   end
 
