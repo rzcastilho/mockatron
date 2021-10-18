@@ -1,7 +1,7 @@
 defmodule Mix.Tasks.Mockatron.Seed do
   use Mix.Task
   import Ecto.Query
-  #import Bcrypt, only: [hash_pwd_salt: 1]
+  # import Bcrypt, only: [hash_pwd_salt: 1]
   alias Argon2
   alias Mockatron.Repo
   alias Mockatron.Auth.User
@@ -310,7 +310,8 @@ defmodule Mix.Tasks.Mockatron.Seed do
           label: "Success",
           http_code: 200,
           body:
-            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n   <soap:Body>\n      <AddResponse xmlns=\"http://tempuri.org/\">\n         <AddResult>20</AddResult>\n      </AddResponse>\n   </soap:Body>\n</soap:Envelope>",
+            "<% import SweetXml %>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n   <soap:Body>\n      <AddResponse xmlns=\"http://tempuri.org/\">\n         <AddResult><%= (request |> xpath(~x\"//intA/text()\") |> String.Chars.to_string |> String.to_integer) + (request |> xpath(~x\"//intB/text()\") |> String.Chars.to_string |> String.to_integer) %></AddResult>\n      </AddResponse>\n   </soap:Body>\n</soap:Envelope>",
+          template: true,
           enable: true
         })
 
@@ -412,7 +413,8 @@ defmodule Mix.Tasks.Mockatron.Seed do
           label: "Success",
           http_code: 200,
           body:
-            "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n   <soap:Body>\n      <SubtractResponse xmlns=\"http://tempuri.org/\">\n         <SubtractResult>10</SubtractResult>\n      </SubtractResponse>\n   </soap:Body>\n</soap:Envelope>",
+            "<% import SweetXml %>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n   <soap:Body>\n      <SubtractResponse xmlns=\"http://tempuri.org/\">\n         <SubtractResult><%= (request |> xpath(~x\"//intA/text()\") |> String.Chars.to_string |> String.to_integer) - (request |> xpath(~x\"//intB/text()\") |> String.Chars.to_string |> String.to_integer) %></SubtractResult>\n      </SubtractResponse>\n   </soap:Body>\n</soap:Envelope>",
+          template: true,
           enable: true
         })
 

@@ -4,6 +4,7 @@ defmodule Mockatron.Repo.Migrations.CreateResponses do
   def change do
     create table(:responses) do
       add :body, :text
+      add :template, :boolean, default: false, null: false
       add :enable, :boolean, default: false, null: false
       add :http_code, :integer
       add :label, :string

@@ -1,0 +1,7 @@
+<mockatron>
+    <code><%= @code %></code>
+    <message><%= @message %></message>
+    <description><%= @description %></description><%= if assigns[:error] do %>
+    <error><![CDATA[<%= @error |> Map.from_struct() |> Jason.encode!() %>]]></error><% end %><%= if assigns[:detail] do %>
+    <detail><![CDATA[<%= "#{inspect(@detail)}" %>]]></detail><% end %>
+</mockatron>

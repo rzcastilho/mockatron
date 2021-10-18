@@ -1,0 +1,7 @@
+code: <%= @code %>
+message: <%= @message %>
+description: <%= @description %><%= if assigns[:error] do %>
+error:
+<%= @error |> Map.from_struct() |> Jason.encode!() %><% end %><%= if assigns[:detail] do %>
+detail:
+<%= "#{inspect(@detail)}" %><% end %>
