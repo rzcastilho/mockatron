@@ -5,7 +5,7 @@ defmodule Mockatron.MixProject do
     [
       app: :mockatron,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.9",
       elixirc_options: [warnings_as_errors: false],
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -61,7 +61,8 @@ defmodule Mockatron.MixProject do
       {:cachex, "~> 3.3"},
       {:argon2_elixir, "~> 2.4"},
       {:ecto_psql_extras, "~> 0.6", only: [:dev, :test]},
-      {:excoveralls, "~> 0.14", only: :test}
+      {:excoveralls, "~> 0.14", only: :test},
+      {:sweet_xml, "~> 0.7"}
     ]
   end
 

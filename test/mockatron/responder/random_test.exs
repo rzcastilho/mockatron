@@ -64,7 +64,7 @@ defmodule Mockatron.Responder.RandomTest do
     current_random_responses =
       1..6
       |> Enum.map(fn _ ->
-        %{body: body} = Mockatron.Responder.Random.response(pid, nil)
+        %{body: body} = Mockatron.Responder.Random.response(pid)
         Jason.decode!(body)
       end)
 

@@ -64,7 +64,7 @@ defmodule Mockatron.Responder.SequentialTest do
     current_sequential_responses =
       1..6
       |> Enum.map(fn _ ->
-        %{body: body} = Mockatron.Responder.Sequential.response(pid, nil)
+        %{body: body} = Mockatron.Responder.Sequential.response(pid)
         Jason.decode!(body)
       end)
 

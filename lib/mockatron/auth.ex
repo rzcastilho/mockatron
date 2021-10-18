@@ -4,10 +4,10 @@ defmodule Mockatron.Auth do
   """
 
   import Ecto.Query, warn: false
-  #import Bcrypt, only: [verify_pass: 2, no_user_verify: 0]
+  # import Bcrypt, only: [verify_pass: 2, no_user_verify: 0]
 
   alias Argon2
-  
+
   alias Mockatron.Repo
   alias Mockatron.Guardian
 

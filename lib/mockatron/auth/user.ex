@@ -1,7 +1,7 @@
 defmodule Mockatron.Auth.User do
   use Ecto.Schema
   import Ecto.Changeset
-  #import Bcrypt, only: [hash_pwd_salt: 1]
+  # import Bcrypt, only: [hash_pwd_salt: 1]
   alias Argon2
 
   schema "users" do
