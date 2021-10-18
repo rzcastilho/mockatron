@@ -50,7 +50,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
-          ref: main # Check out main instead of the latest commit
+          ref: master # Check out main instead of the latest commit
           fetch-depth: 0 # Checkout the whole branch
       - name: Setup Python
         uses: actions/setup-python@v2
