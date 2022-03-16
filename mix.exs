@@ -59,7 +59,7 @@ defmodule Mockatron.MixProject do
       {:bamboo, "~> 2.1"},
       {:bamboo_phoenix, "~> 1.0"},
       {:cachex, "~> 3.3"},
-      {:argon2_elixir, "~> 2.4"},
+      {:argon2_elixir, "~> 3.0"},
       {:ecto_psql_extras, "~> 0.6", only: [:dev, :test]},
       {:excoveralls, "~> 0.14", only: :test},
       {:sweet_xml, "~> 0.7"}
